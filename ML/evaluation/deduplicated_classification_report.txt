@@ -1,0 +1,50 @@
+Deduplicated evaluation: 304 unique cases (from 4920 total rows)
+5-fold stratified CV, out-of-fold predictions
+
+                                         precision    recall  f1-score   support
+
+(vertigo) Paroymsal  Positional Vertigo       1.00      1.00      1.00         7
+                                   AIDS       1.00      1.00      1.00         5
+                                   Acne       1.00      1.00      1.00         5
+                    Alcoholic hepatitis       1.00      1.00      1.00         8
+                                Allergy       1.00      1.00      1.00         5
+                              Arthritis       1.00      1.00      1.00         6
+                       Bronchial Asthma       1.00      1.00      1.00         7
+                   Cervical spondylosis       1.00      1.00      1.00         6
+                            Chicken pox       1.00      1.00      1.00        10
+                    Chronic cholestasis       1.00      1.00      1.00         8
+                            Common Cold       1.00      1.00      1.00         9
+                                 Dengue       1.00      1.00      1.00        10
+                               Diabetes       1.00      1.00      1.00         9
+           Dimorphic hemmorhoids(piles)       1.00      1.00      1.00         6
+                          Drug Reaction       1.00      1.00      1.00         6
+                       Fungal infection       1.00      1.00      1.00         5
+                                   GERD       1.00      1.00      1.00         7
+                        Gastroenteritis       1.00      1.00      1.00         5
+                           Heart attack       1.00      1.00      1.00         5
+                            Hepatitis B       1.00      1.00      1.00         9
+                            Hepatitis C       1.00      1.00      1.00         7
+                            Hepatitis D       1.00      1.00      1.00        10
+                            Hepatitis E       1.00      1.00      1.00         9
+                           Hypertension       1.00      1.00      1.00         6
+                        Hyperthyroidism       1.00      1.00      1.00         9
+                           Hypoglycemia       1.00      1.00      1.00         9
+                         Hypothyroidism       1.00      1.00      1.00         8
+                               Impetigo       1.00      1.00      1.00         6
+                               Jaundice       1.00      1.00      1.00         9
+                                Malaria       1.00      1.00      1.00         8
+                               Migraine       1.00      1.00      1.00        10
+                        Osteoarthristis       1.00      1.00      1.00         7
+           Paralysis (brain hemorrhage)       1.00      1.00      1.00         5
+                    Peptic ulcer diseae       1.00      1.00      1.00         7
+                              Pneumonia       1.00      1.00      1.00         9
+                              Psoriasis       1.00      1.00      1.00         7
+                           Tuberculosis       1.00      1.00      1.00         9
+                                Typhoid       1.00      1.00      1.00         9
+                Urinary tract infection       1.00      1.00      1.00         5
+                         Varicose veins       1.00      1.00      1.00         8
+                            hepatitis A       1.00      1.00      1.00         9
+
+                               accuracy                           1.00       304
+                              macro avg       1.00      1.00      1.00       304
+                           weighted avg       1.00      1.00      1.00       304

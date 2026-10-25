@@ -1,0 +1,20 @@
+{
+  "original_row_count": 4920,
+  "unique_case_count": 304,
+  "duplication_factor": 16.18,
+  "n_classes": 41,
+  "min_examples_per_class": 5,
+  "n_folds_used": 5,
+  "cv_fold_scores": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+  ],
+  "cv_mean_accuracy": 1.0,
+  "cv_std_accuracy": 0.0,
+  "out_of_fold_accuracy": 1.0,
+  "out_of_fold_macro_f1": 1.0,
+  "note": "This is the honest accuracy estimate for the real Kaggle dataset. The naive 100% figure from a plain 80/20 split is inflated by data leakage: the source file duplicates each of only 304 unique cases up to 90 times, so a random split places copies of the same case in both train and test. This evaluation deduplicates first, then uses stratified k-fold cross-validation so every prediction is made on a truly unseen case."
+}

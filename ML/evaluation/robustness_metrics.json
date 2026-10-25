@@ -1,0 +1,37 @@
+{
+  "clean_test_accuracy": 1.0,
+  "noise_sweep": [
+    {
+      "noise_level": 0.0,
+      "mean_accuracy": 1.0,
+      "std_accuracy": 0.0
+    },
+    {
+      "noise_level": 0.1,
+      "mean_accuracy": 0.9984,
+      "std_accuracy": 0.0039
+    },
+    {
+      "noise_level": 0.2,
+      "mean_accuracy": 0.9951,
+      "std_accuracy": 0.0081
+    },
+    {
+      "noise_level": 0.3,
+      "mean_accuracy": 0.9978,
+      "std_accuracy": 0.0044
+    },
+    {
+      "noise_level": 0.4,
+      "mean_accuracy": 0.994,
+      "std_accuracy": 0.0065
+    },
+    {
+      "noise_level": 0.5,
+      "mean_accuracy": 0.9901,
+      "std_accuracy": 0.0077
+    }
+  ],
+  "n_trials_per_level": 20,
+  "note": "Ground truth labels and training data are untouched. Only test-time input is perturbed (symptom dropped and/or an unrelated symptom added, each with the given probability) to simulate imperfect real-world patient symptom reporting. This estimates expected field accuracy under realistic reporting conditions, distinct from clean-data accuracy."
+}
