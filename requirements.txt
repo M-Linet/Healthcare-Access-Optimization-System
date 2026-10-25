@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+scikit-learn
+numpy
+pandas
+joblib
+python-multipart
+slowapi
+requests
+pytest
+httpx
+matplotlib
+seaborn
+rapidfuzz
+lxml
+beautifulsoup4
+html5lib
