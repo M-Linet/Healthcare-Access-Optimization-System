@@ -1,0 +1,1 @@
+SUCCESS: 13371 total active facilities saved across 3 files.
