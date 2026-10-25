@@ -1,0 +1,63 @@
+{
+  "models_compared": [
+    {
+      "model": "Logistic Regression",
+      "cv_accuracy_mean": 0.9237,
+      "cv_accuracy_std": 0.0064,
+      "cv_fold_scores": [
+        0.913,
+        0.9285,
+        0.9236,
+        0.922,
+        0.9317
+      ],
+      "macro_precision": 0.9256,
+      "macro_recall": 0.9237,
+      "macro_f1": 0.924,
+      "roc_auc_macro_ovr": 0.9984,
+      "training_seconds": 3.4
+    },
+    {
+      "model": "Random Forest",
+      "cv_accuracy_mean": 0.8928,
+      "cv_accuracy_std": 0.0059,
+      "cv_fold_scores": [
+        0.8846,
+        0.8959,
+        0.8992,
+        0.887,
+        0.8976
+      ],
+      "macro_precision": 0.8941,
+      "macro_recall": 0.8928,
+      "macro_f1": 0.8925,
+      "roc_auc_macro_ovr": 0.9936,
+      "training_seconds": 3.2
+    },
+    {
+      "model": "Gradient Boosting",
+      "cv_accuracy_mean": 0.8933,
+      "cv_accuracy_std": 0.0056,
+      "cv_fold_scores": [
+        0.8862,
+        0.8984,
+        0.9008,
+        0.8886,
+        0.8927
+      ],
+      "macro_precision": 0.8941,
+      "macro_recall": 0.8933,
+      "macro_f1": 0.8933,
+      "roc_auc_macro_ovr": 0.996,
+      "training_seconds": 163.8
+    }
+  ],
+  "selected_model": "Logistic Regression",
+  "selection_reason": "'Logistic Regression' selected: highest CV accuracy (0.9237).",
+  "n_folds": 5,
+  "dataset": {
+    "total_rows": 6150,
+    "n_features": 131,
+    "n_classes": 41
+  }
+}
