@@ -1,0 +1,20 @@
+# Python
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Local runtime data (created when the app runs)
+backend/prediction_log.sqlite
+SCRAPE_ERROR_DETAIL.txt
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Secrets, in case they are added later
+.env
