@@ -1,0 +1,47 @@
+                                         precision    recall  f1-score   support
+
+(vertigo) Paroymsal  Positional Vertigo       0.82      0.91      0.86        34
+                                   AIDS       1.00      1.00      1.00        30
+                                   Acne       0.96      0.96      0.96        27
+                    Alcoholic hepatitis       1.00      1.00      1.00        32
+                                Allergy       0.92      1.00      0.96        23
+                              Arthritis       1.00      1.00      1.00        24
+                       Bronchial Asthma       1.00      0.85      0.92        26
+                   Cervical spondylosis       0.96      0.96      0.96        24
+                            Chicken pox       0.94      0.89      0.91        35
+                    Chronic cholestasis       0.78      0.86      0.82        21
+                            Common Cold       0.97      0.88      0.92        34
+                                 Dengue       0.90      0.90      0.90        29
+                               Diabetes       1.00      1.00      1.00        30
+           Dimorphic hemmorhoids(piles)       1.00      1.00      1.00        28
+                          Drug Reaction       1.00      0.97      0.99        38
+                       Fungal infection       0.97      1.00      0.98        28
+                                   GERD       0.89      1.00      0.94        31
+                        Gastroenteritis       1.00      0.90      0.95        31
+                           Heart attack       0.82      0.97      0.89        32
+                            Hepatitis B       0.97      0.94      0.95        33
+                            Hepatitis C       0.68      0.90      0.78        29
+                            Hepatitis D       0.59      0.85      0.69        20
+                            Hepatitis E       1.00      0.81      0.90        37
+                           Hypertension       0.87      0.96      0.92        28
+                        Hyperthyroidism       0.97      0.93      0.95        30
+                           Hypoglycemia       0.91      0.75      0.82        28
+                         Hypothyroidism       0.97      1.00      0.99        33
+                               Impetigo       1.00      0.96      0.98        26
+                               Jaundice       0.92      0.86      0.89        28
+                                Malaria       0.71      0.96      0.81        23
+                               Migraine       0.94      0.97      0.96        34
+                        Osteoarthristis       1.00      0.97      0.98        31
+           Paralysis (brain hemorrhage)       0.96      0.92      0.94        25
+                    Peptic ulcer diseae       0.94      0.97      0.96        33
+                              Pneumonia       0.82      0.79      0.81        29
+                              Psoriasis       1.00      0.97      0.98        32
+                           Tuberculosis       0.97      0.76      0.85        42
+                                Typhoid       0.97      0.91      0.94        33
+                Urinary tract infection       0.94      1.00      0.97        33
+                         Varicose veins       0.97      0.97      0.97        34
+                            hepatitis A       1.00      0.75      0.86        32
+
+                               accuracy                           0.92      1230
+                              macro avg       0.93      0.93      0.92      1230
+                           weighted avg       0.93      0.92      0.93      1230

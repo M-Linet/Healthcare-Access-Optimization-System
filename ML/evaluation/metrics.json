@@ -1,0 +1,182 @@
+{
+  "model_config": {
+    "algorithm": "LogisticRegression",
+    "selected_by": "evaluate_model_comparison.py",
+    "hyperparameters": {
+      "C": 1.0,
+      "class_weight": null,
+      "dual": false,
+      "fit_intercept": true,
+      "intercept_scaling": 1,
+      "l1_ratio": 0.0,
+      "max_iter": 1000,
+      "n_jobs": null,
+      "penalty": "deprecated",
+      "random_state": 42,
+      "solver": "lbfgs",
+      "tol": 0.0001,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "random_state": 42
+  },
+  "accuracy": {
+    "test": 0.9244,
+    "train": 0.9522,
+    "overfitting_gap": 0.0278,
+    "cv_5fold_mean": 0.9237,
+    "cv_5fold_std": 0.0064,
+    "cv_5fold_scores": [
+      0.913,
+      0.9285,
+      0.9236,
+      0.922,
+      0.9317
+    ]
+  },
+  "macro_avg": {
+    "precision": 0.9272,
+    "recall": 0.9256,
+    "f1": 0.923
+  },
+  "weighted_avg": {
+    "precision": 0.9334,
+    "recall": 0.9244,
+    "f1": 0.9256
+  },
+  "feature_importance_method": "mean_abs_coefficient",
+  "top_20_feature_importance": [
+    {
+      "symptom": "vomiting",
+      "importance": 0.79404
+    },
+    {
+      "symptom": "fatigue",
+      "importance": 0.71506
+    },
+    {
+      "symptom": "abdominal_pain",
+      "importance": 0.70565
+    },
+    {
+      "symptom": "yellowish_skin",
+      "importance": 0.67881
+    },
+    {
+      "symptom": "skin_rash",
+      "importance": 0.66031
+    },
+    {
+      "symptom": "itching",
+      "importance": 0.6357
+    },
+    {
+      "symptom": "joint_pain",
+      "importance": 0.63069
+    },
+    {
+      "symptom": "nausea",
+      "importance": 0.63039
+    },
+    {
+      "symptom": "high_fever",
+      "importance": 0.62019
+    },
+    {
+      "symptom": "diarrhoea",
+      "importance": 0.61374
+    },
+    {
+      "symptom": "loss_of_appetite",
+      "importance": 0.59993
+    },
+    {
+      "symptom": "yellowing_of_eyes",
+      "importance": 0.58479
+    },
+    {
+      "symptom": "chest_pain",
+      "importance": 0.57823
+    },
+    {
+      "symptom": "headache",
+      "importance": 0.57771
+    },
+    {
+      "symptom": "dark_urine",
+      "importance": 0.54754
+    },
+    {
+      "symptom": "chills",
+      "importance": 0.48871
+    },
+    {
+      "symptom": "breathlessness",
+      "importance": 0.48048
+    },
+    {
+      "symptom": "cough",
+      "importance": 0.47747
+    },
+    {
+      "symptom": "muscle_pain",
+      "importance": 0.45922
+    },
+    {
+      "symptom": "excessive_hunger",
+      "importance": 0.44114
+    }
+  ],
+  "roc_auc": {
+    "macro_ovr": 0.9987,
+    "weighted_ovr": 0.9986
+  },
+  "dataset": {
+    "total_rows": 6150,
+    "n_features": 131,
+    "n_classes": 41,
+    "class_names": [
+      "(vertigo) Paroymsal  Positional Vertigo",
+      "AIDS",
+      "Acne",
+      "Alcoholic hepatitis",
+      "Allergy",
+      "Arthritis",
+      "Bronchial Asthma",
+      "Cervical spondylosis",
+      "Chicken pox",
+      "Chronic cholestasis",
+      "Common Cold",
+      "Dengue",
+      "Diabetes",
+      "Dimorphic hemmorhoids(piles)",
+      "Drug Reaction",
+      "Fungal infection",
+      "GERD",
+      "Gastroenteritis",
+      "Heart attack",
+      "Hepatitis B",
+      "Hepatitis C",
+      "Hepatitis D",
+      "Hepatitis E",
+      "Hypertension",
+      "Hyperthyroidism",
+      "Hypoglycemia",
+      "Hypothyroidism",
+      "Impetigo",
+      "Jaundice",
+      "Malaria",
+      "Migraine",
+      "Osteoarthristis",
+      "Paralysis (brain hemorrhage)",
+      "Peptic ulcer diseae",
+      "Pneumonia",
+      "Psoriasis",
+      "Tuberculosis",
+      "Typhoid",
+      "Urinary tract infection",
+      "Varicose veins",
+      "hepatitis A"
+    ]
+  }
+}
