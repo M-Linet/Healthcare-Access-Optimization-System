@@ -344,6 +344,59 @@
     .stair-count{ margin-top:0; margin-left:auto; }
     .stair-name{ margin-top:0; }
   }
+  /* ---- Softer, smoother pass: rounder shapes, lighter borders, motion that follows the user's actions ---- */
+  :root{ --r-sm:10px; --r-md:16px; --r-lg:24px; --soft:0 1px 2px rgba(20,32,70,.06), 0 8px 24px -8px rgba(20,32,70,.14); --ease:cubic-bezier(.22,.8,.3,1); }
+  .lang-toggle{ border-width:1px; border-radius:999px; }
+  .lang-toggle button{ transition:background .2s var(--ease), color .2s var(--ease); }
+  .tab-btn{ border-radius:0; transition:background .25s var(--ease), color .2s; }
+  .tab-btn:not(.active):hover{ background:var(--cobalt-tint); }
+  .tab-panel.active{ animation:panel-in .35s var(--ease); }
+  @keyframes panel-in{ from{ opacity:0; transform:translateY(8px); } to{ opacity:1; transform:none; } }
+  .gallery-card{ border-radius:var(--r-md); }
+  .gallery-card img{ transition:transform .6s var(--ease); }
+  .gallery-card:hover img{ transform:scale(1.03); }
+  .context-field input, .context-field select, .loc-row input, .filter-row select, #town-select, #symptom-search{
+    border:1px solid var(--line); border-radius:var(--r-sm); background:var(--surface);
+    transition:border-color .2s, box-shadow .2s; }
+  .context-field input:focus, .context-field select:focus, .loc-row input:focus, .filter-row select:focus, #town-select:focus, #symptom-search:focus{
+    outline:none; border-color:var(--cobalt); box-shadow:0 0 0 4px var(--cobalt-tint); }
+  .chip{ transition:background .18s, border-color .18s, transform .18s var(--ease), box-shadow .18s; }
+  .chip:hover{ background:var(--cobalt-tint); border-color:var(--cobalt); transform:translateY(-1px); box-shadow:var(--soft); }
+  .chip:active{ transform:scale(.97); }
+  .chip-selected{ border:1px solid var(--line); border-left:6px solid var(--highlight); border-radius:var(--r-sm); box-shadow:var(--soft); }
+  button.primary, button.ghost{ border-radius:999px; transition:background .2s, transform .15s var(--ease), box-shadow .2s; }
+  button.primary:hover{ box-shadow:0 8px 20px -8px rgba(30,70,170,.55); transform:translateY(-1px); }
+  button.primary:active{ transform:scale(.98); }
+  button.ghost:hover{ background:var(--cobalt-tint); }
+  #result-card{ border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--soft); }
+  #result-card.visible{ animation:result-in .5s var(--ease); }
+  @keyframes result-in{ from{ opacity:0; transform:translateY(14px) scale(.985); } to{ opacity:1; transform:none; } }
+  .stamp{ animation:stamp-down .55s .25s var(--ease) both; }
+  @keyframes stamp-down{ from{ opacity:0; transform:rotate(-6deg) scale(1.8); } to{ opacity:1; transform:rotate(-6deg) scale(1); } }
+  #emergency-banner{ border-radius:var(--r-md); }
+  .step{ border-radius:var(--r-sm); transition:background .3s, opacity .3s; }
+  .facility-card, .facility-item, #facility-list > *{ transition:transform .2s var(--ease), box-shadow .2s; }
+  #facility-list > *:hover{ transform:translateY(-2px); box-shadow:var(--soft); }
+  #facility-map{ border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--soft); }
+  .leaflet-popup-content-wrapper{ border-radius:var(--r-md); }
+  .chart-block img{ border:1px solid var(--line); border-radius:var(--r-md); }
+  .empty-state{ border-radius:var(--r-md); }
+  .bar-chart-track{ border-radius:999px; } .bar-chart-fill{ border-radius:999px; transition:width .8s var(--ease); }
+  .ownership-badge, .emergency-number, .winner-badge{ border-radius:999px; }
+  /* staircase rises once on load; hover lifts a step */
+  .stair{ border-radius:var(--r-sm) var(--r-sm) 0 0; transform-origin:bottom; animation:stair-up .7s var(--ease) both; transition:filter .2s, transform .25s var(--ease); }
+  .stair[data-level="3"]{ animation-delay:.08s } .stair[data-level="4"]{ animation-delay:.16s } .stair[data-level="5"]{ animation-delay:.24s } .stair[data-level="6"]{ animation-delay:.32s }
+  @keyframes stair-up{ from{ transform:scaleY(.2); opacity:0; } to{ transform:none; opacity:1; } }
+  .stair:hover{ filter:brightness(1.06); transform:translateY(-6px); }
+  @media (max-width:640px){ .stair{ border-radius:var(--r-sm); animation-name:panel-in; } .stair:hover{ transform:none; } }
+
+  details.academic-block > summary{ cursor:pointer; list-style:none; display:flex; align-items:center; justify-content:space-between; gap:var(--space-3); }
+  details.academic-block > summary::-webkit-details-marker{ display:none; }
+  details.academic-block > summary h3{ margin:0; }
+  details.academic-block > summary::after{ content:"+"; font-family:var(--display); font-size:1.5rem; line-height:1; width:2rem; height:2rem; display:grid; place-items:center; border-radius:50%; background:var(--cobalt-tint); color:var(--cobalt); flex-shrink:0; }
+  details.academic-block[open] > summary::after{ content:"\2212"; }
+  details.academic-block[open] > summary{ margin-bottom:var(--space-4); }
+  details.academic-block[open] > :not(summary){ animation:panel-in .3s var(--ease); }
   @media (prefers-reduced-motion: reduce){
     *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
     .user-location-ring{ display:none; }
@@ -414,26 +467,26 @@
       <div class="problem-grid">
         <div class="problem-item">
           <h3 data-i18n="problem_card1_title">Resource maldistribution</h3>
-          <p data-i18n="problem_card1_body">Of the 9,736 facilities in this system's registry, the large majority are dispensaries and health centres, while only a small number operate at county-referral level or above — concentrated in a handful of urban counties.</p>
+          <p data-i18n="problem_card1_body">Most of the 9,736 facilities are dispensaries and health centres. Only a few are county referral hospitals or higher, mostly in a handful of urban counties.</p>
         </div>
         <div class="problem-item">
           <h3 data-i18n="problem_card2_title">Patients don't know where to go</h3>
-          <p data-i18n="problem_card2_body">Without triage guidance, patients often default to the nearest facility regardless of whether it can treat their condition — or bypass appropriate lower-tier care and overwhelm referral hospitals unnecessarily.</p>
+          <p data-i18n="problem_card2_body">Without guidance, many people go to the nearest facility, even when it cannot treat them.</p>
         </div>
       </div>
 
       <div class="trust-strip">
         <div class="trust-item">
           <svg class="trust-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 3L20 6.5V11C20 16 16.5 19.5 12 21C7.5 19.5 4 16 4 11V6.5L12 3Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M8.5 12L11 14.5L15.5 9.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <div class="trust-text"><strong data-i18n="trust1_title">No identity stored.</strong> <span data-i18n="trust1_body">Predictions are logged with rounded location data only — never your name, phone number, or exact address.</span></div>
+          <div class="trust-text"><strong data-i18n="trust1_title">No identity stored.</strong> <span data-i18n="trust1_body">Only a rounded location is logged. Never your name, phone number or exact address.</span></div>
         </div>
         <div class="trust-item">
           <svg class="trust-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.6"/><path d="M12 7V12L15.5 14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <div class="trust-text"><strong data-i18n="trust2_title">Real-time rate limiting.</strong> <span data-i18n="trust2_body">Every prediction endpoint is throttled server-side to prevent abuse and keep the service available for everyone.</span></div>
+          <div class="trust-text"><strong data-i18n="trust2_title">Real-time rate limiting.</strong> <span data-i18n="trust2_body">Requests are limited on the server to stop abuse.</span></div>
         </div>
         <div class="trust-item">
           <svg class="trust-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12C4 7.6 7.6 4 12 4C16.4 4 20 7.6 20 12C20 16.4 16.4 20 12 20C10.5 20 9.1 19.6 7.9 18.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M4 16L7.9 18.9L4.5 20.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          <div class="trust-text"><strong data-i18n="trust3_title">Not a diagnosis.</strong> <span data-i18n="trust3_body">This tool supports triage guidance. It never replaces a clinician, and it says so clearly at every step.</span></div>
+          <div class="trust-text"><strong data-i18n="trust3_title">Not a diagnosis.</strong> <span data-i18n="trust3_body">This tool gives triage guidance. It does not replace a health worker.</span></div>
         </div>
       </div>
     </div>
@@ -441,7 +494,7 @@
     <div class="panel">
       <span class="eyebrow" data-i18n="pipeline_kicker">Data Science &amp; Machine Learning</span>
       <h2 class="section-title" data-i18n="pipeline_title">How a prediction becomes a routing decision</h2>
-      <div class="section-lede" data-i18n="pipeline_lede">Real patient-reported symptom data, feature engineering into a machine-learned classifier, rigorous evaluation, and geospatial facility routing.</div>
+      <div class="section-lede" data-i18n="pipeline_lede">From your symptoms to a level of care, then to a facility near you.</div>
       <div class="pipeline">
         <div class="pipeline-step"><div class="step-icon">01</div><div class="step-title" data-i18n="pipe_data">Data</div></div>
         <div class="pipeline-arrow"><svg width="26" height="14" viewBox="0 0 26 14"><line x1="1" y1="7" x2="25" y2="7" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1 4.5" stroke-linecap="round"/><circle cx="25" cy="7" r="2.2" fill="currentColor"/></svg></div>
@@ -465,7 +518,7 @@
     <div class="panel triage-panel">
       <span class="eyebrow" data-i18n="step1">STEP 1 — AI/ML CLINICAL TRIAGE</span>
       <h2 class="section-title" data-i18n="q_feeling">What are you feeling?</h2>
-      <div class="section-lede" data-i18n="triage_lede">Tell us what's going on — a few symptoms are enough to get started. We'll help you figure out where to go next.</div>
+      <div class="section-lede" data-i18n="triage_lede">Choose the symptoms you have.</div>
 
       <div class="mini-pipeline">
         <div class="pipeline-step"><div class="step-title" data-i18n="mini_symptoms">Symptoms</div></div>
@@ -521,8 +574,8 @@
   <div class="tab-panel" id="tab-performance">
     <div class="panel">
       <span class="eyebrow" data-i18n="perf_kicker">Model Performance</span>
-      <h2 class="section-title" data-i18n="perf_title">How well does the classifier actually perform?</h2>
-      <div class="section-lede" data-i18n="perf_lede">Real evaluation results from the trained classifier — 5-fold cross-validated, not a single lucky split.</div>
+      <h2 class="section-title" data-i18n="perf_title">How accurate is it?</h2>
+      <div class="section-lede" data-i18n="perf_lede">Checked with 5-fold cross-validation, so the score does not depend on one lucky split.</div>
 
       <div class="metric-row" id="metric-grid">
         <div class="metric-item"><div class="metric-num" id="m-accuracy">—</div><div class="metric-label" data-i18n="m_accuracy">Test Accuracy</div></div>
@@ -543,9 +596,9 @@
       <div class="perf-note" id="feature-importance-explanation" style="margin-top:var(--space-4);"></div>
 
       <!-- ML Development Pipeline -->
-      <div class="academic-block">
-        <h3 data-i18n="ml_pipeline_title">Model Development Pipeline</h3>
-        <div class="section-lede" data-i18n="ml_pipeline_lede">The actual sequence this project's ML scripts follow, from raw data to a deployed model.</div>
+      <details class="academic-block">
+        <summary><h3 data-i18n="ml_pipeline_title">Model Development Pipeline</h3></summary>
+        <div class="section-lede" data-i18n="ml_pipeline_lede">The steps the project follows, from raw data to the deployed model.</div>
         <div class="pipeline">
           <div class="pipeline-step"><div class="step-title" data-i18n="mlp_dataset">Dataset</div></div>
           <div class="pipeline-arrow"><svg width="22" height="12" viewBox="0 0 22 12"><line x1="1" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.4" stroke-dasharray="1 4" stroke-linecap="round"/><circle cx="21" cy="6" r="1.8" fill="currentColor"/></svg></div>
@@ -565,14 +618,14 @@
           <div class="pipeline-arrow"><svg width="22" height="12" viewBox="0 0 22 12"><line x1="1" y1="6" x2="21" y2="6" stroke="currentColor" stroke-width="1.4" stroke-dasharray="1 4" stroke-linecap="round"/><circle cx="21" cy="6" r="1.8" fill="currentColor"/></svg></div>
           <div class="pipeline-step"><div class="step-title" data-i18n="mlp_deploy">Deployment</div></div>
         </div>
-      </div>
+      </details>
 
       <!-- Models Experimented With -->
-      <div class="academic-block">
-        <h3 data-i18n="models_tried_title">Models Experimented With</h3>
-        <div class="section-lede" data-i18n="models_tried_lede">Click a model below for a short note on why it was considered and its trade-offs.</div>
+      <details class="academic-block">
+        <summary><h3 data-i18n="models_tried_title">Models Experimented With</h3></summary>
+        <div class="section-lede" data-i18n="models_tried_lede">Click a model for why it was tried and its trade-offs.</div>
         <div id="models-tried-wrap"></div>
-      </div>
+      </details>
 
       <!-- Why This Model -->
       <div class="academic-block">
@@ -581,16 +634,16 @@
       </div>
 
       <!-- Final Model Configuration -->
-      <div class="academic-block">
-        <h3 data-i18n="config_title">Final Model Configuration</h3>
-        <div class="section-lede" data-i18n="config_lede">Read directly from the trained model — not manually typed.</div>
+      <details class="academic-block">
+        <summary><h3 data-i18n="config_title">Final Model Configuration</h3></summary>
+        <div class="section-lede" data-i18n="config_lede">Read from the trained model.</div>
         <div id="model-config-wrap"></div>
-      </div>
+      </details>
 
       <!-- Hyperparameter Tuning -->
       <div class="academic-block">
         <h3 data-i18n="tuning_title">Hyperparameter Tuning</h3>
-        <div class="honesty-note" data-i18n="tuning_honesty">Formal hyperparameter search (grid search, random search, or Bayesian optimization) was not performed. The parameters shown above are scikit-learn's defaults plus the few explicitly set in the code (visible in the table above). Future work could evaluate systematic tuning to see whether performance improves further.</div>
+        <div class="honesty-note" data-i18n="tuning_honesty">The main setting, regularisation strength (C), was checked from 0.1 to 100 and the default (C=1) scored best. Other model types (Naive Bayes, SVM, neural network, simple ensembles) scored within about half a point of it, or lower, so the defaults were kept. A full grid search was not run. These scores come from augmented data and are probably optimistic.</div>
       </div>
 
       <!-- Dataset & Features -->
@@ -614,9 +667,9 @@
       </div>
 
       <!-- System Integration -->
-      <div class="academic-block">
-        <h3 data-i18n="system_integration_title">How This Model Fits Into the Larger System</h3>
-        <div class="section-lede" data-i18n="system_integration_lede">This classifier is one component of a larger pipeline — not a standalone diagnosis tool.</div>
+      <details class="academic-block">
+        <summary><h3 data-i18n="system_integration_title">How This Model Fits Into the Larger System</h3></summary>
+        <div class="section-lede" data-i18n="system_integration_lede">The classifier is one part of a larger pipeline, not a diagnosis tool.</div>
         <div class="pipeline" style="flex-wrap:wrap;">
           <div class="pipeline-step"><div class="step-title" data-i18n="sys_symptoms">Patient Symptoms</div></div>
           <div class="pipeline-arrow"><svg width="20" height="12" viewBox="0 0 20 12"><line x1="1" y1="6" x2="19" y2="6" stroke="currentColor" stroke-width="1.4" stroke-dasharray="1 4" stroke-linecap="round"/><circle cx="19" cy="6" r="1.7" fill="currentColor"/></svg></div>
@@ -634,7 +687,7 @@
           <div class="pipeline-arrow"><svg width="20" height="12" viewBox="0 0 20 12"><line x1="1" y1="6" x2="19" y2="6" stroke="currentColor" stroke-width="1.4" stroke-dasharray="1 4" stroke-linecap="round"/><circle cx="19" cy="6" r="1.7" fill="currentColor"/></svg></div>
           <div class="pipeline-step"><div class="step-title" data-i18n="sys_routing">Geospatial Routing</div></div>
         </div>
-      </div>
+      </details>
     </div>
   </div>
 
@@ -643,7 +696,7 @@
     <div class="panel">
       <span class="eyebrow" data-i18n="step2">STEP 2 — GEOSPATIAL HEALTHCARE ROUTING</span>
       <h2 class="section-title" data-i18n="q_nearest">Nearest appropriate facility</h2>
-      <div class="section-lede" data-i18n="routing_lede">Once we know what level of care fits, we'll point you toward real facilities near you — starting with the ones actually equipped to help.</div>
+      <div class="section-lede" data-i18n="routing_lede">Find real facilities near you that can give the level of care you need.</div>
 
       <div class="mini-pipeline">
         <div class="pipeline-step"><div class="step-title" data-i18n="mini_location">User Location</div></div>
@@ -674,7 +727,7 @@
 
       <div id="facility-map"></div>
       <div id="facility-results">
-        <div class="empty-state" data-i18n="facility_empty">Enter coordinates, then check symptoms for the most relevant facility level, or search directly.</div>
+        <div class="empty-state" data-i18n="facility_empty">Pick a town or use your location to see facilities.</div>
       </div>
     </div>
   </div>
@@ -684,7 +737,7 @@
     <div class="panel">
       <span class="eyebrow" data-i18n="insights_kicker">Healthcare Impact — Data Insights</span>
       <h2 class="section-title" data-i18n="insights_title">What the facility registry actually shows</h2>
-      <div class="section-lede" data-i18n="insights_lede">Computed live from the facility registry spanning all 47 Kenyan counties.</div>
+      <div class="section-lede" data-i18n="insights_lede">Counted live from the registry, across all 47 counties.</div>
       <div class="insight-grid">
         <div>
           <h3 style="font-size:var(--text-sm); color:var(--primary-strong); margin-bottom:var(--space-3); font-weight:600;" data-i18n="insights_by_keph">Facilities by KEPH Level</h3>
@@ -816,26 +869,26 @@ const I18N = {
   problem_kicker: {en:"The Problem", sw:"Tatizo"},
   problem_title: {en:"Healthcare access in Kenya is unevenly distributed", sw:"Upatikanaji wa huduma za afya haujasambazwa sawasawa"},
   problem_card1_title: {en:"Resource maldistribution", sw:"Usambazaji usio sawa wa rasilimali"},
-  problem_card1_body: {en:"Of the 9,736 facilities in this system's registry, the large majority are dispensaries and health centres, while only a small number operate at county-referral level or above — concentrated in a handful of urban counties.", sw:"Kati ya vituo 9,736, vingi ni zahanati na vituo vya afya, huku vichache vikifanya kazi katika ngazi ya rufaa ya kaunti au zaidi."},
+  problem_card1_body: {en:"Most of the 9,736 facilities are dispensaries and health centres. Only a few are county referral hospitals or higher, mostly in a handful of urban counties.", sw:"Vingi kati ya vituo 9,736 ni zahanati na vituo vya afya. Vichache tu ni hospitali za rufaa za kaunti au zaidi."},
   problem_card2_title: {en:"Patients don't know where to go", sw:"Wagonjwa hawajui pa kwenda"},
-  problem_card2_body: {en:"Without triage guidance, patients often default to the nearest facility regardless of whether it can treat their condition.", sw:"Bila mwongozo, wagonjwa mara nyingi huenda kwenye kituo cha karibu bila kujali kama kinafaa."},
+  problem_card2_body: {en:"Without guidance, many people go to the nearest facility, even when it cannot treat them.", sw:"Bila mwongozo, watu wengi huenda kituo cha karibu hata kama hakiwezi kuwatibu."},
   trust1_title: {en:"No identity stored.", sw:"Hakuna utambulisho unaohifadhiwa."},
-  trust1_body: {en:"Predictions are logged with rounded location data only — never your name, phone number, or exact address.", sw:"Utabiri huhifadhiwa na data ya eneo iliyorekebishwa tu — kamwe si jina, nambari ya simu, au anwani halisi."},
+  trust1_body: {en:"Only a rounded location is logged. Never your name, phone number or exact address.", sw:"Eneo la makadirio tu ndilo huhifadhiwa. Si jina, simu wala anwani kamili."},
   trust2_title: {en:"Real-time rate limiting.", sw:"Udhibiti wa kiwango wa wakati halisi."},
-  trust2_body: {en:"Every prediction endpoint is throttled server-side to prevent abuse and keep the service available for everyone.", sw:"Kila kiungo cha utabiri kimedhibitiwa upande wa seva kuzuia matumizi mabaya."},
+  trust2_body: {en:"Requests are limited on the server to stop abuse.", sw:"Maombi yamedhibitiwa upande wa seva kuzuia matumizi mabaya."},
   trust3_title: {en:"Not a diagnosis.", sw:"Si uchunguzi wa daktari."},
-  trust3_body: {en:"This tool supports triage guidance. It never replaces a clinician, and it says so clearly at every step.", sw:"Zana hii husaidia kutoa mwongozo tu. Haichukui nafasi ya daktari."},
+  trust3_body: {en:"This tool gives triage guidance. It does not replace a health worker.", sw:"Zana hii hutoa mwongozo tu. Haichukui nafasi ya mhudumu wa afya."},
   pipeline_kicker: {en:"Data Science & Machine Learning", sw:"Sayansi ya Takwimu na ML"},
   pipeline_title: {en:"How a prediction becomes a routing decision", sw:"Jinsi utabiri unavyogeuka kuwa uamuzi"},
-  pipeline_lede: {en:"Real patient-reported symptom data, feature engineering into a machine-learned classifier, rigorous evaluation, and geospatial facility routing.", sw:"Data halisi za dalili, uundaji wa vipengele, tathmini makini, na uelekezaji wa kijiografia."},
+  pipeline_lede: {en:"From your symptoms to a level of care, then to a facility near you.", sw:"Kutoka dalili zako hadi ngazi ya huduma, kisha kituo karibu nawe."},
   pipe_data: {en:"Data", sw:"Data"}, pipe_preprocess: {en:"Preprocessing", sw:"Uchakataji"},
   pipe_feature: {en:"Feature Engineering", sw:"Uundaji wa Vipengele"}, pipe_model: {en:"ML Model", sw:"Kigezo cha ML"},
   pipe_eval: {en:"Evaluation", sw:"Tathmini"}, pipe_predict: {en:"Prediction", sw:"Utabiri"}, pipe_geo: {en:"Geospatial Routing", sw:"Uelekezaji wa Kijiografia"},
   step1: {en:"STEP 1 — AI/ML CLINICAL TRIAGE", sw:"HATUA 1 — UCHUNGUZI WA AI/ML"},
   step2: {en:"STEP 2 — GEOSPATIAL HEALTHCARE ROUTING", sw:"HATUA 2 — UELEKEZAJI WA KIJIOGRAFIA"},
   q_feeling: {en:"What are you feeling?", sw:"Unajisikiaje?"}, q_nearest: {en:"Nearest appropriate facility", sw:"Kituo cha afya kilicho karibu"},
-  triage_lede: {en:"Tell us what's going on — a few symptoms are enough to get started. We'll help you figure out where to go next.", sw:"Tuambie unavyojisikia — dalili chache tu zinatosha kuanza. Tutakusaidia kujua pa kwenda."},
-  routing_lede: {en:"Once we know what level of care fits, we'll point you toward real facilities near you — starting with the ones actually equipped to help.", sw:"Tukishajua ngazi ya huduma inayofaa, tutakuelekeza kwenye vituo halisi karibu nawe."},
+  triage_lede: {en:"Choose the symptoms you have.", sw:"Chagua dalili ulizo nazo."},
+  routing_lede: {en:"Find real facilities near you that can give the level of care you need.", sw:"Pata vituo halisi karibu nawe vinavyotoa ngazi ya huduma unayohitaji."},
   mini_symptoms: {en:"Symptoms", sw:"Dalili"}, mini_feature: {en:"Feature Processing", sw:"Uchakataji wa Vipengele"},
   mini_prediction: {en:"ML Prediction", sw:"Utabiri wa ML"}, mini_confidence: {en:"Confidence", sw:"Uhakika"}, mini_keph: {en:"KEPH Level", sw:"Ngazi ya KEPH"},
   mini_location: {en:"User Location", sw:"Mahali"}, mini_distance: {en:"Distance Calc.", sw:"Hesabu ya Umbali"},
@@ -846,36 +899,36 @@ const I18N = {
   search_placeholder: {en:"Search symptoms, e.g. fever, cough, joint pain…", sw:"Tafuta dalili, mf. homa, kikohozi…"},
   check_btn: {en:"Check symptoms", sw:"Angalia dalili"}, find_btn: {en:"Find facilities", sw:"Tafuta vituo"},
   use_location: {en:"Use my location", sw:"Tumia mahali nilipo"},
-  facility_empty: {en:"Enter coordinates, then check symptoms for the most relevant facility level, or search directly.", sw:"Weka eneo lako, kisha angalia dalili."},
+  facility_empty: {en:"Pick a town or use your location to see facilities.", sw:"Chagua mji au tumia eneo lako kuona vituo."},
   emergency_title: {en:"Possible medical emergency", sw:"Huenda ni dharura ya kiafya"},
   low_confidence_text: {en:"The symptoms entered don't clearly match one condition. This is a rough guide only — please see a health worker for an accurate assessment.", sw:"Dalili hazionyeshi ugonjwa mmoja wazi. Tafadhali mwone mhudumu wa afya."},
   footer_note: {en:"KEPH = Kenya Essential Package for Health (Levels 2–6). This tool supports triage guidance and does not replace clinical diagnosis. In an emergency, call 999 or 112.", sw:"KEPH = Mfumo wa Huduma Muhimu za Afya Kenya. Katika dharura, piga 999 au 112."},
   other_possibilities: {en:"Other possibilities:", sw:"Uwezekano mwingine:"}, go_here: {en:"Go here", sw:"Nenda hapa"},
-  perf_kicker: {en:"Model Performance", sw:"Utendaji wa Kigezo"}, perf_title: {en:"How well does the classifier actually perform?", sw:"Kigezo kinafanya kazi vizuri kiasi gani?"},
-  perf_lede: {en:"Real evaluation results from the trained classifier — 5-fold cross-validated, not a single lucky split.", sw:"Matokeo halisi ya tathmini — kimethibitishwa mara 5."},
+  perf_kicker: {en:"Model Performance", sw:"Utendaji wa Kigezo"}, perf_title: {en:"How accurate is it?", sw:"Ni sahihi kiasi gani?"},
+  perf_lede: {en:"Checked with 5-fold cross-validation, so the score does not depend on one lucky split.", sw:"Imekaguliwa kwa uthibitishaji wa mara 5, kwa hiyo alama haitegemei mgawanyo mmoja wa bahati."},
   compare_title: {en:"Model comparison (5-fold cross-validated, same data splits)", sw:"Ulinganisho wa vigezo (kimethibitishwa mara 5, migawanyo sawa ya data)"},
   compare_not_run: {en:"No comparison yet — run python ML/evaluate_model_comparison.py to see Logistic Regression, Random Forest, and Gradient Boosting compared here.", sw:"Bado hakuna ulinganisho — endesha python ML/evaluate_model_comparison.py."},
   compare_error: {en:"Could not load the model comparison.", sw:"Imeshindwa kupakia ulinganisho wa vigezo."},
   ml_pipeline_title: {en:"Model Development Pipeline", sw:"Mfululizo wa Uundaji wa Kigezo"},
-  ml_pipeline_lede: {en:"The actual sequence this project's ML scripts follow, from raw data to a deployed model.", sw:"Mfuatano halisi wa hatua za mradi huu, kutoka data ghafi hadi kigezo kilichowekwa."},
+  ml_pipeline_lede: {en:"The steps the project follows, from raw data to the deployed model.", sw:"Hatua za mradi, kutoka data ghafi hadi kigezo kilichotumika."},
   mlp_dataset: {en:"Dataset", sw:"Data"}, mlp_preprocess: {en:"Preprocessing", sw:"Uchakataji"},
   mlp_feature: {en:"Symptom Encoding", sw:"Usimbaji wa Dalili"}, mlp_split: {en:"Train/Test Split", sw:"Mgawanyo wa Mafunzo"},
   mlp_cv: {en:"5-Fold CV", sw:"Uthibitisho wa Mara 5"}, mlp_experiment: {en:"Model Experimentation", sw:"Majaribio ya Vigezo"},
   mlp_compare: {en:"Comparison", sw:"Ulinganisho"}, mlp_select: {en:"Selection", sw:"Uteuzi"}, mlp_deploy: {en:"Deployment", sw:"Uwekaji"},
   models_tried_title: {en:"Models Experimented With", sw:"Vigezo Vilivyojaribiwa"},
-  models_tried_lede: {en:"Click a model below for a short note on why it was considered and its trade-offs.", sw:"Bofya kigezo hapa chini kwa maelezo mafupi."},
+  models_tried_lede: {en:"Click a model for why it was tried and its trade-offs.", sw:"Bofya kigezo kuona kwa nini kilijaribiwa."},
   why_model_title: {en:"Why Was the Final Model Chosen?", sw:"Kwa Nini Kigezo Hiki Kilichaguliwa?"},
   config_title: {en:"Final Model Configuration", sw:"Mipangilio ya Mwisho ya Kigezo"},
-  config_lede: {en:"Read directly from the trained model — not manually typed.", sw:"Imesomwa moja kwa moja kutoka kwa kigezo kilichofunzwa."},
+  config_lede: {en:"Read from the trained model.", sw:"Imesomwa kutoka kigezo kilichofunzwa."},
   tuning_title: {en:"Hyperparameter Tuning", sw:"Urekebishaji wa Vigezo Msingi"},
-  tuning_honesty: {en:"Formal hyperparameter search (grid search, random search, or Bayesian optimization) was not performed. The parameters shown above are scikit-learn's defaults plus the few explicitly set in the code (visible in the table above). Future work could evaluate systematic tuning to see whether performance improves further.", sw:"Utafutaji rasmi wa vigezo msingi haukufanywa. Vigezo vilivyoonyeshwa hapo juu ni chaguo-msingi za scikit-learn pamoja na vichache vilivyowekwa waziwazi msimboni."},
+  tuning_honesty: {en:"The main setting, regularisation strength (C), was checked from 0.1 to 100 and the default (C=1) scored best. Other model types (Naive Bayes, SVM, neural network, simple ensembles) scored within about half a point of it, or lower, so the defaults were kept. A full grid search was not run. These scores come from augmented data and are probably optimistic.", sw:"Mpangilio mkuu, nguvu ya udhibiti (C), ulijaribiwa kuanzia 0.1 hadi 100 na chaguo-msingi (C=1) lilifanya vizuri zaidi. Aina nyingine za kigezo zilipata alama zinazokaribiana au chini zaidi, kwa hiyo chaguo-msingi zilibaki. Utafutaji kamili haukufanywa. Alama hizi zinatokana na data iliyoongezwa na huenda zimezidi ukweli."},
   dataset_title: {en:"Dataset & Features", sw:"Data na Vipengele"},
   dataset_distinction: {en:"This project uses two related datasets: a real published dataset (itachi9604's Kaggle \"Disease Symptom Prediction,\" 4,920 rows) and an augmented training dataset built from it (6,150 rows) that adds realistic symptom overlap and reporting noise. The model deployed here is trained on the augmented dataset — see \"Robustness & Data Quality\" below for why that distinction matters.", sw:"Mradi huu hutumia data mbili zinazohusiana: data halisi kutoka Kaggle (safu 4,920) na data iliyoongezwa iliyojengwa kutoka humo (safu 6,150)."},
   robustness_title: {en:"Robustness & Data Quality", sw:"Uimara na Ubora wa Data"},
   robustness_lede: {en:"High test accuracy alone doesn't prove real-world clinical performance. These checks were run on the raw Kaggle dataset to test that directly.", sw:"Usahihi wa juu pekee hauthibitishi utendaji halisi wa kimatibabu."},
   model_card_title: {en:"Model Card", sw:"Kadi ya Kigezo"},
   system_integration_title: {en:"How This Model Fits Into the Larger System", sw:"Jinsi Kigezo Hiki Kinavyofaa Mfumo Mzima"},
-  system_integration_lede: {en:"This classifier is one component of a larger pipeline — not a standalone diagnosis tool.", sw:"Kigezo hiki ni sehemu moja ya mfumo mkubwa zaidi — si zana huru ya uchunguzi."},
+  system_integration_lede: {en:"The classifier is one part of a larger pipeline, not a diagnosis tool.", sw:"Kigezo ni sehemu moja ya mfumo mkubwa, si zana ya utambuzi."},
   sys_symptoms: {en:"Patient Symptoms", sw:"Dalili za Mgonjwa"}, sys_encoding: {en:"Symptom Encoding", sw:"Usimbaji wa Dalili"},
   sys_classifier: {en:"Classification Model", sw:"Kigezo cha Uainishaji"}, sys_prediction: {en:"Prediction + Confidence", sw:"Utabiri + Uhakika"},
   sys_triage: {en:"Triage Rules", sw:"Kanuni za Uchunguzi"}, sys_keph: {en:"KEPH Level", sw:"Ngazi ya KEPH"},
@@ -885,7 +938,7 @@ const I18N = {
   chart_confusion: {en:"Confusion matrix — diagonal indicates correct predictions.", sw:"Jedwali la mchanganyiko."},
   chart_importance: {en:"Top symptoms driving predictions.", sw:"Dalili zenye ushawishi mkubwa."},
   insights_kicker: {en:"Healthcare Impact — Data Insights", sw:"Athari za Kiafya"}, insights_title: {en:"What the facility registry actually shows", sw:"Orodha ya vituo inaonyesha nini"},
-  insights_lede: {en:"Computed live from the facility registry spanning all 47 Kenyan counties.", sw:"Imehesabiwa moja kwa moja kutoka kaunti zote 47."},
+  insights_lede: {en:"Counted live from the registry, across all 47 counties.", sw:"Imehesabiwa moja kwa moja kutoka sajili, kaunti zote 47."},
   insights_by_keph: {en:"Facilities by KEPH Level", sw:"Vituo kwa Ngazi ya KEPH"}, insights_by_county: {en:"Top 5 Counties by Facility Count", sw:"Kaunti 5 Bora"},
   filter_ownership: {en:"Ownership:", sw:"Umiliki:"}, filter_any: {en:"Any", sw:"Yoyote"}, filter_public: {en:"Public", sw:"Umma"},
   filter_private: {en:"Private", sw:"Binafsi"}, filter_faith: {en:"Faith-based / NGO", sw:"Kidini / NGO"},
@@ -1057,7 +1110,7 @@ async function findFacilities(){
     facilities = facilities.slice(0, 6);
     LAST_FACILITY_RESULTS = facilities;
     renderFacilityResults(facilities, routingMethod);
-    if (facilities.length) updateMap(lat, lon, facilities);
+    if (facilities.length){ try{ updateMap(lat, lon, facilities); }catch(_){ /* map library not loaded; the list still works */ } }
   }catch(e){ resultsBox.innerHTML = '<div class="empty-state">Could not reach the backend.</div>'; }
 }
 
@@ -1343,7 +1396,7 @@ function renderModelCard(){
       <h4>Known Limitations</h4>
       <ul>
         <li>Trained on augmented synthetic patient cases, not real clinical records</li>
-        <li>No formal hyperparameter tuning performed</li>
+        <li>Only the regularisation strength was checked; no full grid search</li>
         <li>Confidence scores are not clinically calibrated probabilities</li>
       </ul>
       <h4>Intended / Non-Intended Use</h4>
