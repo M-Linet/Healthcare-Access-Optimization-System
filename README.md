@@ -288,6 +288,9 @@ Optional request fields: `severity` (dict of symptom→mild/moderate/severe),
 `age` (int), `sex` (male/female/other), `pregnant` (bool).
 
 
+- `notebook/Data_Exploration_and_Analysis.ipynb` is the data story: what the symptom data really contains, how Kenya's facilities compare with what the conditions need, how far the nearest referral hospital is, and where the model fails. The charts are also saved in `ML/evaluation/story/`.
+- `ML/extended_search/` holds a small manual search over model settings and model types. See the README in that folder.
+
 ## Running the tests
 
 ```
