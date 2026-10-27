@@ -1160,7 +1160,10 @@ function renderFacilityResults(facilities, routingMethod){
     ? '<div class="note-line">Distances below are real road-network driving distance and estimated drive time.</div>'
     : '<div class="note-line">Road routing was unavailable for this request — showing straight-line distance instead.</div>';
 
-  resultsBox.innerHTML = methodNote + '<div class="facility-list">' + facilities.map(f => {
+  const farNote = (facilities[0].distance_km > 50)
+    ? `<div class="note-line">The nearest suitable facility is ${Math.round(facilities[0].distance_km)} km away. If this is urgent, go to the nearest facility of any level first, or call 999 / 112.</div>`
+    : '';
+  resultsBox.innerHTML = methodNote + farNote + '<div class="facility-list">' + facilities.map(f => {
     const own = classifyOwnership(f.ownership);
     const distLabel = (routingMethod === 'road_network' && f.duration_min != null)
       ? `${f.distance_km} km<div style="font-size:0.65rem; font-weight:400; color:var(--muted-foreground); margin-top:1px;">~${Math.round(f.duration_min)} min drive</div>`

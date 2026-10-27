@@ -74,3 +74,16 @@ def test_rank_facilities_no_filter_returns_all():
 def test_rank_facilities_empty_list():
     ranked = rank_facilities_by_distance(-1.2864, 36.8172, [])
     assert ranked == []
+
+
+def test_specialist_clinics_excluded():
+    from geo import is_general_care
+    assert not is_general_care({"facility_type": "Dental Clinic", "facility_name": "X"})
+    assert not is_general_care({"facility_type": "Medical Clinic", "facility_name": "Tasneem Pharmacy"})
+    assert is_general_care({"facility_type": "Health Centre", "facility_name": "Kibera Health Centre"})
+    fac = [
+        {"latitude": -1.28, "longitude": 36.82, "keph_level": 3, "facility_type": "Eye Centre", "facility_name": "Bans Optical"},
+        {"latitude": -1.30, "longitude": 36.82, "keph_level": 3, "facility_type": "Health Centre", "facility_name": "Real HC"},
+    ]
+    ranked = rank_facilities_by_distance(-1.28, 36.82, fac, min_keph_level=3)
+    assert [f["facility_name"] for f in ranked] == ["Real HC"]

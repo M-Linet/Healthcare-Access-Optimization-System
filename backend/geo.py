@@ -6,6 +6,7 @@ KEPH-level facility based on their GPS coordinates.
 """
 
 import math
+import re
 
 
 def haversine_km(lat1, lon1, lat2, lon2):
@@ -27,6 +28,22 @@ def haversine_km(lat1, lon1, lat2, lon2):
     return R * c
 
 
+# Specialist or non-clinical listings that should not come up as a place to
+# go for general symptoms (eye, dental, blood bank, pharmacies, physio).
+_SPECIALIST_TYPES = {"dental clinic", "eye centre", "eye clinic", "regional blood transfusion centre"}
+_SPECIALIST_NAME = re.compile(
+    r"dental|dentist|optic|optician|\beye\b|pharmacy|chemist|physiotherap|blood (transfusion|satellite)",
+    re.IGNORECASE,
+)
+
+
+def is_general_care(f):
+    """False for dental, eye, blood-bank, pharmacy and physio listings."""
+    if str(f.get("facility_type", "")).strip().lower() in _SPECIALIST_TYPES:
+        return False
+    return not _SPECIALIST_NAME.search(str(f.get("facility_name", "")))
+
+
 def rank_facilities_by_distance(user_lat, user_lon, facilities, min_keph_level=None):
     """
     facilities: list of dicts with at least 'latitude', 'longitude', 'keph_level'
@@ -36,9 +53,9 @@ def rank_facilities_by_distance(user_lat, user_lon, facilities, min_keph_level=N
 
     Returns facilities sorted by distance ascending, each with a 'distance_km' field.
     """
-    candidates = facilities
+    candidates = [f for f in facilities if is_general_care(f)]
     if min_keph_level is not None:
-        candidates = [f for f in facilities if f["keph_level"] >= min_keph_level]
+        candidates = [f for f in candidates if f["keph_level"] >= min_keph_level]
 
     ranked = []
     for f in candidates:
