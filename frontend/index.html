@@ -397,6 +397,11 @@
   details.academic-block[open] > summary::after{ content:"\2212"; }
   details.academic-block[open] > summary{ margin-bottom:var(--space-4); }
   details.academic-block[open] > :not(summary){ animation:panel-in .3s var(--ease); }
+  .story-block{ margin:var(--space-10) 0 0; max-width:62rem; }
+  .story-block h3{ font-size:var(--text-xl); letter-spacing:-0.015em; margin-bottom:var(--space-2); }
+  .story-block p{ max-width:46rem; color:var(--ink-soft); margin-bottom:var(--space-4); }
+  .story-block img{ width:100%; display:block; border-radius:var(--r-md); border:1px solid var(--line); background:var(--paper); }
+  .story-foot{ margin-top:var(--space-10); color:var(--ink-soft); font-size:var(--text-sm); }
   @media (prefers-reduced-motion: reduce){
     *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
     .user-location-ring{ display:none; }
@@ -448,6 +453,7 @@
     <button class="tab-btn" data-tab="routing"><span data-i18n="tab_routing">Find a facility</span></button>
     <button class="tab-btn" data-tab="performance"><span data-i18n="tab_performance">Model performance</span></button>
     <button class="tab-btn" data-tab="insights"><span data-i18n="tab_insights">Facility data</span></button>
+    <button class="tab-btn" data-tab="story"><span data-i18n="tab_story">Data story</span></button>
   </div>
 </nav>
 
@@ -751,6 +757,35 @@
     </div>
   </div>
 
+  <!-- TAB 6: DATA STORY -->
+  <div class="tab-panel" id="tab-story">
+    <div class="panel">
+      <h2 class="section-title" data-i18n="story_title">What the data says</h2>
+      <div class="section-lede" data-i18n="story_lede">Five charts from the analysis notebook: what the dataset really is, where care is missing, and where the model can fail.</div>
+      <figure class="story-block">
+        <p>The public dataset has 4,920 rows, but only 304 are different cases, each repeated about 16 times. That is why scores near 100% on it mean little, and why the model is judged on augmented data and cross-validation instead.</p>
+        <a href="/model-assets/story/01_rows_vs_cases.png" target="_blank" rel="noopener" title="Open full size"><img src="/model-assets/story/01_rows_vs_cases.png" alt="Grid of squares: 4,920 rows, only 304 distinct cases" loading="lazy"></a>
+      </figure>
+      <figure class="story-block">
+        <p>44% of the 41 conditions are mapped to level 4 or higher care. Only 6% of Kenya's facilities are level 4 or higher, and 0.3% are level 5 or 6.</p>
+        <a href="/model-assets/story/05_need_vs_supply.png" target="_blank" rel="noopener" title="Open full size"><img src="/model-assets/story/05_need_vs_supply.png" alt="Stacked bars comparing care levels needed with facilities available" loading="lazy"></a>
+      </figure>
+      <figure class="story-block">
+        <p>A level 4 hospital is close to most clinics, with a median of 5 km. A level 5 or 6 hospital is a median 32 km away, and 13% of clinics are more than 100 km from one. Distances are straight lines, so real roads are longer.</p>
+        <a href="/model-assets/story/08_map_distance_to_referral.png" target="_blank" rel="noopener" title="Open full size"><img src="/model-assets/story/08_map_distance_to_referral.png" alt="Map of Kenya where each clinic is coloured by distance to the nearest level 5-6 hospital" loading="lazy"></a>
+      </figure>
+      <figure class="story-block">
+        <p>In Mandera, Marsabit, Turkana, Wajir and Lamu a typical clinic is more than 200 km from the nearest level 5-6 hospital. There the system's most useful job is to say honestly that the right care is far away.</p>
+        <a href="/model-assets/story/09_longest_journeys.png" target="_blank" rel="noopener" title="Open full size"><img src="/model-assets/story/09_longest_journeys.png" alt="Twelve counties with the longest distance to a referral hospital" loading="lazy"></a>
+      </figure>
+      <figure class="story-block">
+        <p>What matters is the care level, not the disease name. In the test split, 5.0% of cases get the wrong level and 2.0% are sent too low. These scores come from augmented data and are probably optimistic.</p>
+        <a href="/model-assets/story/12_care_level_errors.png" target="_blank" rel="noopener" title="Open full size"><img src="/model-assets/story/12_care_level_errors.png" alt="Bar showing how many test cases get the right condition, the right level, or the wrong level" loading="lazy"></a>
+      </figure>
+      <p class="story-foot">Tap a chart to open it full size. The full analysis, with 15 charts and the code, is in <code>notebook/Data_Exploration_and_Analysis.ipynb</code>.</p>
+    </div>
+  </div>
+
 </main>
 
 <footer data-i18n="footer_note">
@@ -866,6 +901,9 @@ const I18N = {
   tab_performance: {en:"Model performance", sw:"Utendaji wa modeli"},
   tab_routing: {en:"Find a facility", sw:"Tafuta kituo"},
   tab_insights: {en:"Facility data", sw:"Takwimu za vituo"},
+  tab_story: {en:"Data story", sw:"Hadithi ya data"},
+  story_title: {en:"What the data says", sw:"Data inasema nini"},
+  story_lede: {en:"Five charts from the analysis notebook: what the dataset really is, where care is missing, and where the model can fail.", sw:"Chati tano kutoka kwenye uchambuzi: data ni nini hasa, huduma inakosekana wapi, na kigezo kinaweza kukosea wapi."},
   problem_kicker: {en:"The Problem", sw:"Tatizo"},
   problem_title: {en:"Healthcare access in Kenya is unevenly distributed", sw:"Upatikanaji wa huduma za afya haujasambazwa sawasawa"},
   problem_card1_title: {en:"Resource maldistribution", sw:"Usambazaji usio sawa wa rasilimali"},
