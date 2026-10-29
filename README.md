@@ -185,6 +185,54 @@ link. No separate frontend build step, no Android Studio needed.
 3. Re-run `python ML/train_model.py` and, ideally, `python ML/evaluate_model.py`.
 4. Restart the server — no other changes needed.
 
+## Limitations
+
+This is a student project and a decision-support prototype. It is not a
+diagnostic tool and has not been tested with patients or clinicians.
+
+**Model**
+- The Kaggle symptom data has 4,920 rows but only 304 distinct cases (each
+  case is repeated about 16 times). The training set was then augmented to
+  6,150 rows. Because of this, the reported accuracy (92.37% +/- 0.64 in
+  5-fold cross-validation, 92.44% on the held-out test split) is probably
+  optimistic. Copies of the same case can end up on both sides of a split.
+- The split used in `evaluate_model.py` is random, while `train_model.py`
+  groups by case. They should use the same grouped split. This is listed
+  under future work.
+- No significance test was run, and only the regularisation strength was
+  checked. There was no full grid search.
+- The model predicts a disease from symptoms. The care level (KEPH 2 to 6)
+  comes from a mapping of diseases to levels that I decided myself. It is a
+  project judgement, not an official guideline.
+- Red-flag rules (for example chest pain with breathlessness) run
+  separately from the model and override it. They were written for this
+  project and have not been reviewed by a clinician.
+
+**Facility data**
+- KEPH levels are inferred from the facility type, not taken from the
+  official register. Three private hospitals that were tagged level 6 were
+  corrected to level 5 (see `data/facility_corrections.csv`); other levels
+  may still be off.
+- `ML/evaluation/data_quality_check.py` lists what is still known to be
+  wrong: 2 Turkana dispensaries with coordinates outside Kenya's bounding
+  box, 13 name and county pairs that appear twice, and one row with
+  placeholder coordinates. These were left in so the facility count stays
+  consistent across the report and the notebook.
+- Dental, eye, blood bank, pharmacy and physiotherapy listings are hidden
+  from triage results, but other unusual listings may remain.
+
+**Routing**
+- Distances use OSRM road routing when it is reachable and fall back to
+  straight-line distance otherwise. The result tells the user which one was
+  used. Drive time does not include traffic, and the distance is not a
+  guarantee that a facility is open or has beds.
+- If the nearest suitable facility is more than 50 km away, the result says
+  so and points to the nearest facility of any level and to 999 / 112.
+
+**Not done yet**
+- Manual, user and alpha/beta testing with real people.
+- Review by a clinician.
+
 ## Facility data notes / known limitations
 
 - KEPH level is *inferred* from the `Type` column, since the source dataset
