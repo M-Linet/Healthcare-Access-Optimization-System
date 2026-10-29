@@ -87,3 +87,13 @@ def test_specialist_clinics_excluded():
     ]
     ranked = rank_facilities_by_distance(-1.28, 36.82, fac, min_keph_level=3)
     assert [f["facility_name"] for f in ranked] == ["Real HC"]
+
+
+def test_only_real_national_referral_hospitals_are_level_6():
+    import sqlite3, os
+    db = os.path.join(os.path.dirname(__file__), "..", "database.sqlite")
+    rows = sqlite3.connect(db).execute(
+        "SELECT facility_name FROM facilities WHERE keph_level = 6").fetchall()
+    names = " ".join(r[0].lower() for r in rows)
+    for private in ("avenue hospital", "nairobi west", "eldoret hospital"):
+        assert private not in names

@@ -1,0 +1,4 @@
+facility_id,field,old_value,new_value,reason
+EDI451,keph_level,6,5,"Avenue Hospital is a private hospital; KEPH level 6 is for national referral hospitals. Level 5 chosen as a judgement (large private hospital). Verify against KMHFL."
+EDI1700,keph_level,6,5,"Eldoret Hospital is a private hospital in the same town as Moi Teaching and Referral Hospital (the actual national referral hospital). Level 5 chosen as a judgement. Verify against KMHFL."
+EDI6878,keph_level,6,5,"Nairobi West Hospital is a private hospital; not a national referral hospital. Level 5 chosen as a judgement. Verify against KMHFL."
