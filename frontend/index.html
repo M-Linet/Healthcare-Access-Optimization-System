@@ -143,6 +143,29 @@
   .pipeline-step{ position:relative; flex:1 1 7rem; padding-right:var(--space-3); }
   .pipeline-step .step-icon{ position:relative; width:1.4rem; height:1.4rem; border-radius:50%; background:var(--highlight); border:2px solid var(--ink); font-size:0; margin-bottom:var(--space-3); }
   .pipeline-step .step-title{ font-family:var(--display); font-weight:600; font-size:var(--text-sm); line-height:1.25; color:var(--ink); }
+  /* worked example on the About page */
+  .case-picker{ display:flex; flex-wrap:wrap; gap:var(--space-2); margin-top:var(--space-5); }
+  .case-picker button{ font:inherit; font-size:var(--text-sm); padding:0.4rem 0.8rem; background:#fff; color:var(--ink); border:1px solid #C9CED8; border-radius:999px; cursor:pointer; }
+  .case-picker button[aria-selected="true"]{ background:var(--ink); color:#fff; border-color:var(--ink); }
+  .case-picker button:focus-visible{ outline:3px solid var(--cobalt); outline-offset:2px; }
+  .case-emergency{ color:#C8372D; font-weight:600; }
+  .case-stairs b.alert{ background:#C8372D; }
+  .case-row{ display:grid; grid-template-columns:repeat(4, 1fr); gap:var(--space-5); margin-top:var(--space-6); }
+  .case-step{ min-width:0; }
+  .case-label{ font-weight:600; font-size:var(--text-sm); padding-bottom:var(--space-2); margin-bottom:var(--space-3); border-bottom:2px solid var(--ink); }
+  .case-chips span{ display:inline-block; background:#fff; border:1px solid var(--grey, #C9CED8); border-radius:6px; padding:0.3rem 0.6rem; margin:0 0.4rem 0.45rem 0; font-size:var(--text-sm); }
+  .case-big{ font-family:var(--display); font-size:1.9rem; line-height:1.1; margin-bottom:var(--space-2); }
+  .case-bar{ height:10px; background:#E1E5EC; border-radius:5px; overflow:hidden; margin-bottom:var(--space-2); }
+  .case-bar i{ display:block; height:100%; width:89%; background:var(--cobalt); }
+  .case-note{ font-size:var(--text-sm); color:var(--muted-foreground); line-height:1.5; }
+  .case-stairs{ display:flex; align-items:flex-end; gap:4px; height:64px; margin-bottom:var(--space-2); }
+  .case-stairs b{ flex:1; display:block; background:#C9CED8; border-radius:4px 4px 0 0; }
+  .case-stairs b.on{ background:var(--cobalt); }
+  .case-hl{ font-weight:600; color:var(--ink); background:linear-gradient(var(--highlight), var(--highlight)) no-repeat 0 88% / 100% 38%; }
+  .case-fac{ font-weight:600; margin-bottom:var(--space-1); }
+  .case-foot{ margin-top:var(--space-6); padding-top:var(--space-3); border-top:1px solid #C9CED8; font-size:var(--text-sm); color:var(--muted-foreground); }
+  @media (max-width: 880px){ .case-row{ grid-template-columns:1fr 1fr; } }
+  @media (max-width: 520px){ .case-row{ grid-template-columns:1fr; } }
   .pipeline-arrow{ display:none; }
   .mini-pipeline{ display:none; }
 
@@ -498,24 +521,32 @@
     </div>
 
     <div class="panel">
-      <span class="eyebrow" data-i18n="pipeline_kicker">Data Science &amp; Machine Learning</span>
-      <h2 class="section-title" data-i18n="pipeline_title">How a prediction becomes a routing decision</h2>
-      <div class="section-lede" data-i18n="pipeline_lede">From your symptoms to a level of care, then to a facility near you.</div>
-      <div class="pipeline">
-        <div class="pipeline-step"><div class="step-icon">01</div><div class="step-title" data-i18n="pipe_data">Data</div></div>
-        <div class="pipeline-arrow"><svg width="26" height="14" viewBox="0 0 26 14"><line x1="1" y1="7" x2="25" y2="7" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1 4.5" stroke-linecap="round"/><circle cx="25" cy="7" r="2.2" fill="currentColor"/></svg></div>
-        <div class="pipeline-step"><div class="step-icon">02</div><div class="step-title" data-i18n="pipe_preprocess">Preprocessing</div></div>
-        <div class="pipeline-arrow"><svg width="26" height="14" viewBox="0 0 26 14"><line x1="1" y1="7" x2="25" y2="7" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1 4.5" stroke-linecap="round"/><circle cx="25" cy="7" r="2.2" fill="currentColor"/></svg></div>
-        <div class="pipeline-step"><div class="step-icon">03</div><div class="step-title" data-i18n="pipe_feature">Feature Engineering</div></div>
-        <div class="pipeline-arrow"><svg width="26" height="14" viewBox="0 0 26 14"><line x1="1" y1="7" x2="25" y2="7" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1 4.5" stroke-linecap="round"/><circle cx="25" cy="7" r="2.2" fill="currentColor"/></svg></div>
-        <div class="pipeline-step"><div class="step-icon">04</div><div class="step-title" data-i18n="pipe_model">ML Model</div></div>
-        <div class="pipeline-arrow"><svg width="26" height="14" viewBox="0 0 26 14"><line x1="1" y1="7" x2="25" y2="7" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1 4.5" stroke-linecap="round"/><circle cx="25" cy="7" r="2.2" fill="currentColor"/></svg></div>
-        <div class="pipeline-step"><div class="step-icon">05</div><div class="step-title" data-i18n="pipe_eval">Evaluation</div></div>
-        <div class="pipeline-arrow"><svg width="26" height="14" viewBox="0 0 26 14"><line x1="1" y1="7" x2="25" y2="7" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1 4.5" stroke-linecap="round"/><circle cx="25" cy="7" r="2.2" fill="currentColor"/></svg></div>
-        <div class="pipeline-step"><div class="step-icon">06</div><div class="step-title" data-i18n="pipe_predict">Prediction</div></div>
-        <div class="pipeline-arrow"><svg width="26" height="14" viewBox="0 0 26 14"><line x1="1" y1="7" x2="25" y2="7" stroke="currentColor" stroke-width="1.6" stroke-dasharray="1 4.5" stroke-linecap="round"/><circle cx="25" cy="7" r="2.2" fill="currentColor"/></svg></div>
-        <div class="pipeline-step"><div class="step-icon">07</div><div class="step-title" data-i18n="pipe_geo">Geospatial Routing</div></div>
+      <h2 class="section-title" data-i18n="pipeline_title">One real case, start to finish</h2>
+      <div class="section-lede" data-i18n="pipeline_lede">Real outputs from the model, saved here as examples. Each one starts from a different town.</div>
+      <div class="case-picker" id="case-picker" role="tablist"></div>
+      <div class="case-row">
+        <div class="case-step">
+          <div class="case-label" data-i18n="case_s1">1. You describe it</div>
+          <div class="case-chips" id="case-chips"></div>
+        </div>
+        <div class="case-step">
+          <div class="case-label" data-i18n="case_s2">2. The model reads it</div>
+          <div class="case-big" id="case-disease"></div>
+          <div class="case-bar"><i id="case-bar-fill"></i></div>
+          <div class="case-note" id="case-s2-note"></div>
+        </div>
+        <div class="case-step">
+          <div class="case-label" data-i18n="case_s3">3. It picks a care level</div>
+          <div class="case-stairs" id="case-stairs" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></div>
+          <div class="case-note" id="case-s3-note"></div>
+        </div>
+        <div class="case-step">
+          <div class="case-label" data-i18n="case_s4">4. It finds where to go</div>
+          <div class="case-fac" id="case-fac"></div>
+          <div class="case-note" id="case-s4-note"></div>
+        </div>
       </div>
+      <div class="case-foot" data-i18n="case_foot">Example only. The tool gives triage guidance and does not replace a health worker. In an emergency call 999 or 112.</div>
     </div>
   </div>
 
@@ -917,8 +948,13 @@ const I18N = {
   trust3_title: {en:"Not a diagnosis.", sw:"Si uchunguzi wa daktari."},
   trust3_body: {en:"This tool gives triage guidance. It does not replace a health worker.", sw:"Zana hii hutoa mwongozo tu. Haichukui nafasi ya mhudumu wa afya."},
   pipeline_kicker: {en:"Data Science & Machine Learning", sw:"Sayansi ya Takwimu na ML"},
-  pipeline_title: {en:"How a prediction becomes a routing decision", sw:"Jinsi utabiri unavyogeuka kuwa uamuzi"},
-  pipeline_lede: {en:"From your symptoms to a level of care, then to a facility near you.", sw:"Kutoka dalili zako hadi ngazi ya huduma, kisha kituo karibu nawe."},
+  pipeline_title: {en:"One real case, start to finish", sw:"Mfano halisi, kuanzia mwanzo hadi mwisho"},
+  pipeline_lede: {en:"Real outputs from the model, saved here as examples. Pick a case.", sw:"Matokeo halisi ya kigezo, yamehifadhiwa hapa kama mifano. Kila mfano unaanzia mji tofauti."},
+  case_s1: {en:"1. You describe it", sw:"1. Unaeleza dalili"},
+  case_s2: {en:"2. The model reads it", sw:"2. Kigezo kinazisoma"},
+  case_s3: {en:"3. It picks a care level", sw:"3. Kinachagua ngazi ya huduma"},
+  case_s4: {en:"4. It finds where to go", sw:"4. Kinapata mahali pa kwenda"},
+  case_foot: {en:"Example only. The tool gives triage guidance and does not replace a health worker. In an emergency call 999 or 112.", sw:"Mfano tu. Zana hii inatoa mwongozo wa awali na haichukui nafasi ya mhudumu wa afya. Dharura: piga 999 au 112."},
   pipe_data: {en:"Data", sw:"Data"}, pipe_preprocess: {en:"Preprocessing", sw:"Uchakataji"},
   pipe_feature: {en:"Feature Engineering", sw:"Uundaji wa Vipengele"}, pipe_model: {en:"ML Model", sw:"Kigezo cha ML"},
   pipe_eval: {en:"Evaluation", sw:"Tathmini"}, pipe_predict: {en:"Prediction", sw:"Utabiri"}, pipe_geo: {en:"Geospatial Routing", sw:"Uelekezaji wa Kijiografia"},
@@ -982,15 +1018,77 @@ const I18N = {
   filter_private: {en:"Private", sw:"Binafsi"}, filter_faith: {en:"Faith-based / NGO", sw:"Kidini / NGO"},
 };
 
+const CASES = [
+  { id:'mild', pick:{en:'Skin rash', sw:'Vipele vya ngozi'}, level:2, conf:98, disease:{en:'Fungal infection', sw:'Maambukizi ya fangasi'},
+    syms:{en:['Itching','Skin rash','Skin eruptions'], sw:['Kuwasha','Vipele vya ngozi','Madoa kwenye ngozi']},
+    s2:{en:'98% confident. Red-flag rules checked separately: none triggered.', sw:'Uhakika wa 98%. Kanuni za dalili hatari zilikaguliwa tofauti: hakuna iliyoamilishwa.'},
+    s3:{en:'Level 2, a dispensary or small clinic.', sw:'Ngazi ya 2, zahanati au kliniki ndogo.'},
+    fac:'St. Monica Hospital Town Clinic',
+    s4:{en:'Medical clinic, 0.2 km from central Kisumu. Next: Tuungane Youth Centre, 0.3 km.', sw:'Kliniki, km 0.2 kutoka katikati ya Kisumu. Kinachofuata: Tuungane Youth Centre, km 0.3.'} },
+  { id:'malaria', pick:{en:'Fever', sw:'Homa'}, level:3, conf:89, disease:{en:'Malaria', sw:'Malaria'},
+    syms:{en:['Chills','High fever','Sweating','Headache','Vomiting'], sw:['Kutetemeka kwa baridi','Homa kali','Kutokwa jasho','Maumivu ya kichwa','Kutapika']},
+    s2:{en:'89% confident. Red-flag rules checked separately: none triggered.', sw:'Uhakika wa 89%. Kanuni za dalili hatari zilikaguliwa tofauti: hakuna iliyoamilishwa.'},
+    s3:{en:'Level 3, a health centre.', sw:'Ngazi ya 3, kituo cha afya.'},
+    fac:'Light For Christ Hospital',
+    s4:{en:'0.2 km from central Mombasa. Next: Al-Firdaus Health Care, 0.4 km.', sw:'Km 0.2 kutoka katikati ya Mombasa. Kinachofuata: Al-Firdaus Health Care, km 0.4.'} },
+  { id:'chest', pick:{en:'Cough', sw:'Kikohozi'}, level:4, conf:46, disease:{en:'Pneumonia', sw:'Nimonia'},
+    syms:{en:['Cough','High fever','Breathlessness','Phlegm'], sw:['Kikohozi','Homa kali','Kukosa pumzi','Makohozi']},
+    s2:{en:'46% confident. Other likely causes: bronchial asthma, tuberculosis. Red-flag rules: none triggered.', sw:'Uhakika wa 46%. Sababu nyingine zinazowezekana: pumu, kifua kikuu. Kanuni za dalili hatari: hakuna iliyoamilishwa.'},
+    s3:{en:'Level 4, a sub-county hospital.', sw:'Ngazi ya 4, hospitali ya kaunti ndogo.'},
+    fac:'Nakuru War Memorial Hospital',
+    s4:{en:'Hospital, 2.3 km from central Nakuru. Next: Valley Hospital, 2.5 km.', sw:'Hospitali, km 2.3 kutoka katikati ya Nakuru. Kinachofuata: Valley Hospital, km 2.5.'} },
+  { id:'emergency', pick:{en:'Chest pain', sw:'Maumivu ya kifua'}, level:6, conf:97, emergency:true, disease:{en:'Heart attack', sw:'Shambulio la moyo'},
+    syms:{en:['Chest pain','Breathlessness','Sweating'], sw:['Maumivu ya kifua','Kukosa pumzi','Kutokwa jasho']},
+    s2:{en:'Red flag: possible heart attack. This rule overrides the model. Call 999 or 112.', sw:'Dalili hatari: huenda ni shambulio la moyo. Kanuni hii inapita kigezo. Piga 999 au 112.'},
+    s3:{en:'Level 6, a national referral hospital.', sw:'Ngazi ya 6, hospitali ya rufaa ya kitaifa.'},
+    fac:'Kenyatta National Hospital',
+    s4:{en:'1.9 km from central Nairobi. Call 999 or 112 first.', sw:'Km 1.9 kutoka katikati ya Nairobi. Piga 999 au 112 kwanza.'} },
+  { id:'unsure', pick:{en:'Not sure', sw:'Haijulikani'}, level:3, conf:25, disease:{en:'Malaria (unsure)', sw:'Malaria (haijathibitika)'},
+    syms:{en:['High fever','Headache','Vomiting'], sw:['Homa kali','Maumivu ya kichwa','Kutapika']},
+    s2:{en:'Only 25% confident, so the app marks it low confidence. Next: brain haemorrhage 23%. Too few symptoms to tell.', sw:'Uhakika wa 25% tu, kwa hiyo programu inaonyesha uhakika mdogo. Inayofuata: kuvuja damu ubongoni 23%. Dalili ni chache mno.'},
+    s3:{en:'Level 3, a health centre. Add more symptoms to narrow it down.', sw:'Ngazi ya 3, kituo cha afya. Ongeza dalili zaidi ili kupunguza uwezekano.'},
+    fac:'Pioneer Health Centre',
+    s4:{en:'Health centre, 0.6 km from central Eldoret.', sw:'Kituo cha afya, km 0.6 kutoka katikati ya Eldoret.'} }
+];
+let CASE_ID = 'malaria';
+function renderCase(){
+  const c = CASES.find(x => x.id === CASE_ID) || CASES[0];
+  const picker = document.getElementById('case-picker');
+  if(!picker) return;
+  picker.innerHTML = '';
+  CASES.forEach(k => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.setAttribute('role','tab'); b.setAttribute('aria-selected', k.id === CASE_ID ? 'true' : 'false');
+    b.textContent = k.pick[LANG];
+    b.onclick = () => { CASE_ID = k.id; renderCase(); };
+    picker.appendChild(b);
+  });
+  document.getElementById('case-chips').innerHTML = c.syms[LANG].map(x => '<span></span>').join('');
+  document.querySelectorAll('#case-chips span').forEach((el,i) => el.textContent = c.syms[LANG][i]);
+  document.getElementById('case-disease').textContent = c.disease[LANG];
+  document.getElementById('case-bar-fill').style.width = c.conf + '%';
+  const n2 = document.getElementById('case-s2-note'); n2.textContent = c.s2[LANG]; n2.classList.toggle('case-emergency', !!c.emergency);
+  document.querySelectorAll('#case-stairs b').forEach((el,i) => {
+    el.style.height = (20 + i*20) + '%';
+    el.classList.toggle('on', i === c.level - 2 && !c.emergency);
+    el.classList.toggle('alert', i === c.level - 2 && !!c.emergency);
+  });
+  document.getElementById('case-s3-note').textContent = c.s3[LANG];
+  document.getElementById('case-fac').textContent = c.fac;
+  document.getElementById('case-s4-note').textContent = c.s4[LANG];
+}
+
 function t(key){ return (I18N[key] && I18N[key][LANG]) || (I18N[key] && I18N[key]['en']) || key; }
 function applyTranslations(){
-  document.querySelectorAll('[data-i18n]').forEach(el => { el.textContent = t(el.getAttribute('data-i18n')); });
+  document.querySelectorAll('[data-i18n]').forEach(el => { const v = t(el.getAttribute('data-i18n')); if(el.hasAttribute('data-i18n-html')) el.innerHTML = v; else el.textContent = v; });
   document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { el.placeholder = t(el.getAttribute('data-i18n-placeholder')); });
   renderLadder(LAST_RECOMMENDED_LEVEL);
+  renderCase();
   if (LAST_FACILITY_RESULTS.length) renderFacilityResults(LAST_FACILITY_RESULTS);
 }
 document.getElementById('lang-en').onclick = () => { LANG='en'; updateLangButtons(); applyTranslations(); };
 document.getElementById('lang-sw').onclick = () => { LANG='sw'; updateLangButtons(); applyTranslations(); };
+renderCase();
 function updateLangButtons(){
   document.getElementById('lang-en').classList.toggle('active', LANG==='en');
   document.getElementById('lang-sw').classList.toggle('active', LANG==='sw');
