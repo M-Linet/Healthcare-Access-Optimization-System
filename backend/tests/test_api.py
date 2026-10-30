@@ -106,3 +106,19 @@ def test_rate_limit_returns_429_on_31st_request():  # SC-02
     codes = [client.post("/api/predict", json={"symptoms": ["high_fever"]}).status_code for _ in range(31)]
     assert codes[:30] == [200] * 30
     assert codes[30] == 429
+
+
+def test_far_warning_for_remote_search():
+    # Lodwar is far from any level 6 hospital
+    r = client.post("/api/nearest-facilities",
+                    json={"latitude": 3.1191, "longitude": 35.5973, "min_keph_level": 6, "limit": 3})
+    body = r.json()
+    assert body["far_warning"] is True
+    assert body["nearest_km"] > 50
+
+
+def test_no_far_warning_in_nairobi():
+    r = client.post("/api/nearest-facilities", json={**NAIROBI, "min_keph_level": 6, "limit": 3})
+    body = r.json()
+    assert body["far_warning"] is False
+    assert body["nearest_km"] < 50

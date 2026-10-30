@@ -887,6 +887,7 @@ let SELECTED = new Map();
 let LAST_RECOMMENDED_LEVEL = null;
 let LANG = 'en';
 let LAST_FACILITY_RESULTS = [];
+let LAST_FAR_KM = null;
 
 // ---- Tabs ----
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -973,6 +974,7 @@ const I18N = {
   search_placeholder: {en:"Search symptoms, e.g. fever, cough, joint pain…", sw:"Tafuta dalili, mf. homa, kikohozi…"},
   check_btn: {en:"Check symptoms", sw:"Angalia dalili"}, find_btn: {en:"Find facilities", sw:"Tafuta vituo"},
   use_location: {en:"Use my location", sw:"Tumia mahali nilipo"},
+  far_note: {en:"The nearest suitable facility is {km} km away. If this is urgent, go to the nearest facility of any level first, or call 999 / 112.", sw:"Kituo kinachofaa kilicho karibu zaidi kiko umbali wa km {km}. Ikiwa ni dharura, nenda kwanza kwenye kituo chochote kilicho karibu, au piga 999 / 112."},
   facility_empty: {en:"Pick a town or use your location to see facilities.", sw:"Chagua mji au tumia eneo lako kuona vituo."},
   emergency_title: {en:"Possible medical emergency", sw:"Huenda ni dharura ya kiafya"},
   low_confidence_text: {en:"The symptoms entered don't clearly match one condition. This is a rough guide only — please see a health worker for an accurate assessment.", sw:"Dalili hazionyeshi ugonjwa mmoja wazi. Tafadhali mwone mhudumu wa afya."},
@@ -1245,6 +1247,7 @@ async function findFacilities(){
     }
     facilities = facilities.slice(0, 6);
     LAST_FACILITY_RESULTS = facilities;
+    LAST_FAR_KM = data.far_warning ? data.nearest_km : null;
     renderFacilityResults(facilities, routingMethod);
     if (facilities.length){ try{ updateMap(lat, lon, facilities); }catch(_){ /* map library not loaded; the list still works */ } }
   }catch(e){ resultsBox.innerHTML = '<div class="empty-state">Could not reach the backend.</div>'; }
@@ -1258,8 +1261,8 @@ function renderFacilityResults(facilities, routingMethod){
     ? '<div class="note-line">Distances below are real road-network driving distance and estimated drive time.</div>'
     : '<div class="note-line">Road routing was unavailable for this request — showing straight-line distance instead.</div>';
 
-  const farNote = (facilities[0].distance_km > 50)
-    ? `<div class="note-line">The nearest suitable facility is ${Math.round(facilities[0].distance_km)} km away. If this is urgent, go to the nearest facility of any level first, or call 999 / 112.</div>`
+  const farNote = (LAST_FAR_KM !== null)
+    ? `<div class="note-line">${t('far_note').replace('{km}', Math.round(LAST_FAR_KM))}</div>`
     : '';
   resultsBox.innerHTML = methodNote + farNote + '<div class="facility-list">' + facilities.map(f => {
     const own = classifyOwnership(f.ownership);

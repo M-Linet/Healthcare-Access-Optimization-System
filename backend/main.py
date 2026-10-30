@@ -261,6 +261,17 @@ def get_all_facilities():
 # ---------------------------------------------------------------------------
 # Routes
 # ---------------------------------------------------------------------------
+FAR_FACILITY_KM = 50  # beyond this, tell the user the nearest suitable facility is far
+
+
+def distance_warning(ranked):
+    """Fields that say how far the nearest suitable facility is."""
+    if not ranked:
+        return {"nearest_km": None, "far_warning": False}
+    nearest = ranked[0]["distance_km"]
+    return {"nearest_km": nearest, "far_warning": nearest > FAR_FACILITY_KM}
+
+
 @app.get("/health")
 def health():
     return {"status": "ok", "symptoms_known": len(symptom_vocab), "diseases_known": len(disease_keph_map)}
@@ -409,7 +420,7 @@ def nearest_facilities(request: Request, req: NearestFacilitiesRequest):
         req.latitude, req.longitude, facilities,
         min_keph_level=req.min_keph_level, limit=req.limit
     )
-    return {"facilities": ranked, "routing_method": routing_method}
+    return {"facilities": ranked, "routing_method": routing_method, **distance_warning(ranked)}
 
 
 @app.post("/api/triage")
@@ -440,6 +451,7 @@ def triage(request: Request, req: TriageRequest):
         "prediction": prediction,
         "recommended_facilities": ranked,
         "routing_method": routing_method,
+        **distance_warning(ranked),
     }
 
 
