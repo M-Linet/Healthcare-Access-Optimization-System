@@ -9,8 +9,10 @@ Pipeline:
      no pyarrow-backed string ops — avoids Python 3.14 / pyarrow indexing issues).
   3. Manual NumPy shuffle + split (train/test), no sklearn train_test_split, so
      behavior is identical across platforms/versions.
-  4. Train a RandomForestClassifier.
-  5. Evaluate on the held-out test split.
+  4. Train a LogisticRegression (the model the app uses; chosen over Random
+     Forest and Gradient Boosting by 5-fold CV, see evaluate_model_comparison.py).
+  5. Evaluate on the held-out, group-aware test split, then refit on all the
+     data for the saved model (this is how the deployed model was made).
   6. Save the model, the symptom feature list (for building inference vectors),
      and the disease->KEPH level map to ML/ as .joblib artifacts.
 
@@ -22,7 +24,7 @@ import csv
 import os
 import numpy as np
 import joblib
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 
 DATA_PATH = os.path.join(os.path.dirname(__file__), "..", "data", "dataset.csv")
@@ -178,8 +180,8 @@ def main():
     X_train, X_test, y_train, y_test = group_train_test_split(X, y, groups)
     print(f"  Train: {X_train.shape[0]} rows | Test: {X_test.shape[0]} rows")
 
-    print("Training RandomForestClassifier (n_estimators=100)...")
-    clf = RandomForestClassifier(n_estimators=100, random_state=RANDOM_SEED, n_jobs=-1)
+    print("Training LogisticRegression on the train split (for evaluation only)...")
+    clf = LogisticRegression(max_iter=1000, random_state=RANDOM_SEED)
     clf.fit(X_train, y_train)
 
     print("Evaluating...")
@@ -188,6 +190,10 @@ def main():
     print(f"  Test accuracy (leakage-free): {acc * 100:.2f}%")
     print("\nClassification report:")
     print(classification_report(y_test, preds, zero_division=0))
+
+    print("Refitting on all rows for the saved model (as the deployed model was)...")
+    clf = LogisticRegression(max_iter=1000, random_state=RANDOM_SEED)
+    clf.fit(X, y)
 
     print("Loading disease -> KEPH level mapping...")
     keph_mapping = load_keph_mapping(KEPH_MAP_PATH)
