@@ -199,6 +199,11 @@ diagnostic tool and has not been tested with patients or clinicians.
 - The split used in `evaluate_model.py` is random, while `train_model.py`
   groups by case. They should use the same grouped split. This is listed
   under future work.
+- The "low confidence" warning appears when the top prediction is below 50%.
+  This cutoff comes from `ML/evaluation/confidence_calibration.py`: on held-out
+  cases with only 2 or 3 symptoms entered, the model was right about 72% of
+  the time at 40-50% confidence and about 87% at 50-60%. It is a trade-off,
+  not a guarantee, and it was measured on the same augmented data as the rest.
 - No significance test was run, and only the regularisation strength was
   checked. There was no full grid search.
 - The model predicts a disease from symptoms. The care level (KEPH 2 to 6)

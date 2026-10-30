@@ -1,0 +1,124 @@
+{
+  "held_out_as_is": {
+    "n": 1214,
+    "accuracy": 0.927,
+    "by_confidence": [
+      {
+        "from": 0,
+        "to": 0.25,
+        "n": 40,
+        "share_correct": 0.475
+      },
+      {
+        "from": 0.25,
+        "to": 0.4,
+        "n": 67,
+        "share_correct": 0.582
+      },
+      {
+        "from": 0.4,
+        "to": 0.5,
+        "n": 46,
+        "share_correct": 0.652
+      },
+      {
+        "from": 0.5,
+        "to": 0.6,
+        "n": 50,
+        "share_correct": 0.82
+      },
+      {
+        "from": 0.6,
+        "to": 0.75,
+        "n": 82,
+        "share_correct": 0.902
+      },
+      {
+        "from": 0.75,
+        "to": 0.9,
+        "n": 170,
+        "share_correct": 0.959
+      },
+      {
+        "from": 0.9,
+        "to": 1.0,
+        "n": 759,
+        "share_correct": 1.0
+      }
+    ]
+  },
+  "partial_2_or_3_symptoms": {
+    "n": 2278,
+    "accuracy": 0.707,
+    "by_confidence": [
+      {
+        "from": 0,
+        "to": 0.25,
+        "n": 545,
+        "share_correct": 0.356
+      },
+      {
+        "from": 0.25,
+        "to": 0.4,
+        "n": 453,
+        "share_correct": 0.55
+      },
+      {
+        "from": 0.4,
+        "to": 0.5,
+        "n": 214,
+        "share_correct": 0.724
+      },
+      {
+        "from": 0.5,
+        "to": 0.6,
+        "n": 165,
+        "share_correct": 0.867
+      },
+      {
+        "from": 0.6,
+        "to": 0.75,
+        "n": 220,
+        "share_correct": 0.9
+      },
+      {
+        "from": 0.75,
+        "to": 0.9,
+        "n": 355,
+        "share_correct": 0.977
+      },
+      {
+        "from": 0.9,
+        "to": 1.0,
+        "n": 326,
+        "share_correct": 0.994
+      }
+    ],
+    "by_floor": [
+      {
+        "floor": 0.4,
+        "share_marked_confident": 0.562,
+        "accuracy_when_confident": 0.912,
+        "accuracy_when_flagged": 0.444
+      },
+      {
+        "floor": 0.5,
+        "share_marked_confident": 0.468,
+        "accuracy_when_confident": 0.949,
+        "accuracy_when_flagged": 0.493
+      },
+      {
+        "floor": 0.6,
+        "share_marked_confident": 0.396,
+        "accuracy_when_confident": 0.964,
+        "accuracy_when_flagged": 0.538
+      },
+      {
+        "floor": 0.7,
+        "share_marked_confident": 0.326,
+        "accuracy_when_confident": 0.983,
+        "accuracy_when_flagged": 0.573
+      }
+    ]
+  }
+}

@@ -57,7 +57,7 @@ FRONTEND_DIR = os.path.join(BASE_DIR, "..", "frontend")
 EVAL_DIR = os.path.join(ML_DIR, "evaluation")
 
 # Below this model confidence, we don't assert a diagnosis — we say "unclear, see a clinician"
-CONFIDENCE_FLOOR = 0.40
+CONFIDENCE_FLOOR = 0.50  # see ML/evaluation/confidence_calibration.py
 
 # ---------------------------------------------------------------------------
 # App setup — rate limiting, CORS, and security middleware

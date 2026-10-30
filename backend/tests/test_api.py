@@ -122,3 +122,13 @@ def test_no_far_warning_in_nairobi():
     body = r.json()
     assert body["far_warning"] is False
     assert body["nearest_km"] < 50
+
+
+def test_low_confidence_flag_follows_the_floor():
+    # 3 symptoms that give about 46% for pneumonia: below the 0.50 floor
+    r = client.post("/api/predict", json={"symptoms": ["cough", "high_fever", "breathlessness", "phlegm"]})
+    body = r.json()
+    assert body["low_confidence"] == (body["confidence"] < main.CONFIDENCE_FLOOR)
+    assert main.CONFIDENCE_FLOOR == 0.50
+    clear = client.post("/api/predict", json={"symptoms": ["itching", "skin_rash", "nodal_skin_eruptions"]}).json()
+    assert clear["low_confidence"] is False
