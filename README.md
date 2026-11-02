@@ -1,7 +1,5 @@
 # Healthcare Access Optimization System
 
-Final year project — B.Sc. Data Science.
-Student: Maina Linet Muthoni (24/00632) · Supervisor: Madam Gladys Mange
 
 A triage system that predicts a likely condition from reported
 symptoms, maps it to the minimum appropriate KEPH (Kenya Essential Package
@@ -104,12 +102,12 @@ surface-level presentation varies.
 
 **Resulting honest metrics** (see `ML/evaluation/metrics.json`):
   - Deployed model: Logistic Regression (best of three compared by 5-fold CV)
-  - Held-out test accuracy: **92.44%**
-  - 5-fold cross-validation: **92.37% ± 0.64%** (folds:
-    91.30% / 92.85% / 92.36% / 92.20% / 93.17%)
-  - Train accuracy: 95.22% (a 2.78-point train/test gap)
-  - Compared models (CV accuracy): Logistic Regression 92.37%,
-    Gradient Boosting 89.33%, Random Forest 89.28%
+  - Held-out test accuracy: **92.67%** (group-aware split)
+  - 5-fold group-aware cross-validation: **92.13% ± 0.89%** (folds:
+    93.50% / 90.89% / 92.68% / 91.87% / 91.71%)
+  - Train accuracy: 94.98% (a 2.31-point train/test gap)
+  - Compared models (CV accuracy): Logistic Regression 92.13%,
+    Random Forest 89.09%, Gradient Boosting 88.49%
   - Confusion matrix shows realistic, clinically-sensible confusions
     concentrated among genuinely similar conditions (Hepatitis B/C/D/E
     confusing with each other and with Jaundice, Asthma variants
@@ -174,6 +172,9 @@ link. No separate frontend build step, no Android Studio needed.
 | POST   | `/api/nearest-facilities`   | `{latitude, longitude, min_keph_level?, limit?}` → ranked facilities |
 | POST   | `/api/triage`               | `{symptoms, latitude, longitude}` → prediction + matching facilities combined |
 | GET    | `/api/facilities`           | Full facility list                               |
+
+`/api/nearest-facilities` and `/api/triage` also return `nearest_km` and `far_warning` (true when the nearest suitable facility is more than 50 km away). Dental, eye, blood-bank, pharmacy and physiotherapy listings are never returned.
+
 | GET    | `/health`                   | Healthcheck                                      |
 
 ## Retraining after any data change
@@ -193,12 +194,14 @@ diagnostic tool and has not been tested with patients or clinicians.
 **Model**
 - The Kaggle symptom data has 4,920 rows but only 304 distinct cases (each
   case is repeated about 16 times). The training set was then augmented to
-  6,150 rows. Because of this, the reported accuracy (92.37% +/- 0.64 in
-  5-fold cross-validation, 92.44% on the held-out test split) is probably
-  optimistic. Copies of the same case can end up on both sides of a split.
-- The split used in `evaluate_model.py` is random, while `train_model.py`
-  groups by case. They should use the same grouped split. This is listed
-  under future work.
+  6,150 rows. Because of this, the reported accuracy (92.13% +/- 0.89 in
+  5-fold cross-validation, 92.67% on the held-out test split) is probably
+  optimistic. Training, evaluation and model comparison all use the same
+  case-grouped split, so exact copies of a case never sit on both sides.
+  But the 6,150 rows include augmented variants of the same 304 cases, and
+  those near-copies can still cross the split. The grouped numbers are
+  almost the same as the earlier random-split numbers (92.44% / 92.37%),
+  which shows exact duplicates were not the main source of the high score.
 - The "low confidence" warning appears when the top prediction is below 50%.
   This cutoff comes from `ML/evaluation/confidence_calibration.py`: on held-out
   cases with only 2 or 3 symptoms entered, the model was right about 72% of
@@ -276,7 +279,7 @@ options are:
 11. Non-PII prediction logging + usage stats endpoint — done (`/api/stats`)
 12. Real Kaggle symptom dataset — done, with full leakage/robustness
     diagnosis and a defensible augmented-training approach (see "About the
-    data" above) — deployed Logistic Regression: test accuracy 92.44%, 5-fold CV 92.37% ± 0.64%
+    data" above) — deployed Logistic Regression: test accuracy 92.67%, 5-fold CV 92.13% ± 0.89% (group-aware split)
 13. Consider adding authentication / patient session history if scope grows
 14. Road-distance routing (OSRM) with straight-line fallback — done
 15. Multi-model comparison (Logistic Regression, Random Forest, Gradient
@@ -295,7 +298,7 @@ Building on the working prototype, this version adds:
   Kenya's emergency number (999/112), and force routing to at least a
   County Referral Hospital (KEPH L5) regardless of what the classifier
   predicted.
-- **Confidence floor** — predictions under 40% confidence are marked
+- **Confidence floor** — predictions under 50% confidence are marked
   `low_confidence: true`. The frontend shows a caution notice instead of
   asserting a diagnosis with false certainty.
 - **Patient context** (`backend/patient_context.py`) — optional age, sex,
@@ -313,7 +316,7 @@ Building on the working prototype, this version adds:
   `backend/prediction_log.sqlite`. Coordinates are rounded to ~11km precision
   before storage — nowhere near enough to identify a specific person's
   location. Query `/api/stats` for aggregate numbers (useful for your defense).
-- **Unit tests** (`backend/tests/`) — 15 tests covering Haversine distance
+- **Unit tests** (`backend/tests/`) — automated tests covering Haversine distance
   correctness/symmetry, facility ranking and KEPH filtering, the symptom
   vectorizer's multi-hot encoding, and the train/test split's determinism.
   Run with `pytest tests/ -v` from the `backend/` folder.
@@ -351,4 +354,4 @@ cd backend
 python -m pytest tests -v
 ```
 
-49 automated tests (distance, symptom encoding, red-flag rules, care level rules, routing fallback and the API).
+54 automated tests (distance, symptom encoding, red-flag rules, care level rules, specialist-clinic filter, routing fallback, far-facility warning, confidence cutoff and the API).
