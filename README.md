@@ -1,357 +1,126 @@
 # Healthcare Access Optimization System
 
+**Know where to go, before you need to.**
 
-A triage system that predicts a likely condition from reported
-symptoms, maps it to the minimum appropriate KEPH (Kenya Essential Package
-for Health) facility level, and routes the patient to the nearest facility
-capable of treating it.
+You tell it what you are feeling. It suggests how serious it might be, which level of care you need, and the nearest facilities in Kenya that offer that level. It works in English and Swahili.
 
-## What's in here
+## Why I built it
+
+Kenya has about 9,700 health facilities in its public registers, but most of them are dispensaries and health centres. Only a few are referral hospitals, and those are mostly in a handful of towns. When someone gets sick, they often go to whatever is closest, even when that place cannot treat them. Then they get sent on somewhere else, which costs time and money.
+
+I wanted to try a simple answer to a simple question: given these symptoms, what is the lowest level of care that is enough, and where is the nearest facility at that level?
+
+## How it works
+
+1. **You pick your symptoms.** There are 131 to choose from. You can add your age, sex, whether you are pregnant, and how bad each symptom is.
+2. **A model reads them.** A Logistic Regression model suggests the most likely condition out of 41, and says how confident it is. If it is under 50% sure, the app says so and tells you to see a health worker.
+3. **A care level is chosen.** Each condition is mapped to a KEPH level (the Kenya Essential Package for Health): 2 is a dispensary, 3 a health centre, 4 a sub-county hospital, 5 a county referral hospital, and 6 a national referral hospital. Your age, pregnancy and symptom severity can raise the level.
+4. **Emergency rules run on their own.** Combinations like chest pain with breathlessness and sweating are checked by plain rules, not by the model. If one matches, the app shows 999 / 112 and only lists level 5 and 6 hospitals, whatever the model said.
+5. **It finds the nearest facilities** at that level or higher, using road distance when the routing service is reachable and straight-line distance when it is not. If the nearest suitable facility is more than 50 km away, it tells you.
+
+The About page of the app has five real examples you can click through, each starting from a different town.
+
+## Run it on your computer
+
+You need Python 3 and an internet connection (the map and road routing use online services).
 
 ```
-healthcare-project/
-├── data/
-│   ├── healthcare_facilities.csv       # REAL: 10,013 facilities, all 47 counties
-│   │                                    # (World Bank / energydata.info, source: opendata.go.ke)
-│   ├── dataset_real_kaggle_raw.csv     # REAL: unmodified Kaggle "Disease Symptom
-│   │                                    # Prediction" dataset (itachi9604), 4,920 rows
-│   ├── dataset.csv                     # ACTIVE training data: 6,150 augmented cases,
-│   │                                    # generated FROM the real Kaggle symptom pools
-│   │                                    # (see "About the data" below — this is important)
-│   ├── generate_augmented_dataset.py   # builds dataset.csv from the real Kaggle pools
-│   ├── build_keph_mapping_real.py      # builds the KEPH mapping for the 41 real diseases
-│   └── disease_keph_mapping.csv        # disease -> recommended min KEPH level
-├── ML/
-│   ├── train_model.py                  # trains the classifier; evaluate_model_comparison.py picks the best of 3
-│   ├── evaluate_model.py               # full rigorous evaluation (CV, confusion matrix, etc.)
-│   ├── evaluate_deduplicated.py        # leakage-diagnosis: honest CV on unique cases only
-│   ├── evaluate_robustness.py          # stress-test: accuracy under noisy symptom reporting
-│   ├── evaluation/                     # all evaluation charts + metrics.json (generated)
-│   ├── disease_classifier.joblib       # trained model (generated)
-│   ├── symptom_features.joblib         # symptom vocabulary (generated)
-│   └── disease_keph_mapping.joblib     # disease -> KEPH level map (generated)
-├── backend/
-│   ├── main.py                         # FastAPI app (serves API + frontend)
-│   ├── geo.py                          # Haversine distance + facility ranking
-│   ├── red_flags.py                    # emergency symptom-combination detection
-│   ├── patient_context.py              # age/sex/pregnancy/severity-aware triage adjustment
-│   ├── prediction_log.py               # non-PII usage logging
-│   ├── init_db.py                      # builds database.sqlite from healthcare_facilities.csv
-│   ├── tests/                          # pytest unit tests (geo.py, vectorizer)
-│   └── database.sqlite                 # generated: 9,736 facilities loaded into the database
-├── frontend/
-│   └── index.html                      # single-page web UI (symptom checker + facility finder)
-└── requirements.txt
-```
-
-## IMPORTANT — about the data (read this before your defense)
-
-This project went through three real iterations on the symptom dataset. All
-three are preserved in the repo so the reasoning is auditable — this is
-worth explaining to your lecturer as evidence of methodology, not hidden.
-
-**Iteration 1 — fully synthetic (superseded).** `generate_dataset.py` built
-a symptom-disease dataset from scratch using general medical knowledge,
-not real data. Functional for pipeline-building, but not defensible as
-"real" data if questioned.
-
-**Iteration 2 — the real Kaggle dataset, used raw (superseded, kept for
-provenance as `dataset_real_kaggle_raw.csv`).** The real, published
-"Disease Symptom Prediction" dataset by itachi9604 (Kaggle) — 4,920 rows,
-41 diseases, 131 real symptom tokens. Investigation found two serious
-problems with using it directly:
-  1. **Exact-duplicate leakage.** The file contains only **304 truly
-     unique** (disease, symptom-set) cases, each copied 6–90 times to pad
-     the row count. A normal random train/test split placed duplicates of
-     the same case on both sides, so the model was "recognizing" cases it
-     had already memorized rather than generalizing — producing a
-     meaningless 100% test accuracy.
-  2. **Even after fixing the leakage** (see `evaluate_deduplicated.py` —
-     deduplicate to the 304 unique cases, then stratified 5-fold CV so
-     every prediction is made on a genuinely unseen case), accuracy was
-     **still 100%**. A robustness stress test (`evaluate_robustness.py`,
-     randomly dropping/adding symptoms at test time up to 50% corruption)
-     confirmed this wasn't a fluke: accuracy stayed above 99% even under
-     heavy noise. The real cause: this dataset assigns each disease a
-     small number of fixed, essentially non-overlapping symptom templates,
-     making it close to a lookup table rather than a realistic diagnostic
-     problem. This is a genuine, verifiable property of the dataset, not
-     a bug in the evaluation.
-
-**Iteration 3 — real-data-grounded augmentation (what the system actually
-trains on now, `dataset.csv`).** `generate_augmented_dataset.py` keeps the
-**real Kaggle disease-symptom associations as ground truth** — every
-symptom pool per disease is the union of symptoms actually recorded for
-that disease in the real dataset, nothing invented — and generates a
-larger set of realistic patient *cases* by sampling from those real pools
-with:
-  - non-specific symptom overlap across diseases (fatigue, fever, headache
-    etc. — all real Kaggle symptom tokens, chosen for realistic cross-
-    disease prevalence)
-  - a chance of borrowing a symptom from a different disease's real pool
-    (simulates overlapping/comorbid presentations)
-  - simulated incomplete reporting (a symptom randomly dropped)
-
-This does not alter or fabricate medical knowledge — it addresses the
-fact that 304 unique, idealized textbook cases is both too small and too
-clean to train or evaluate a model meant to reflect real diagnostic
-uncertainty. This is a standard, defensible data augmentation technique,
-directly analogous to image augmentation (rotate/crop/noise) in computer
-vision — the label/ground-truth relationship is preserved, only the
-surface-level presentation varies.
-
-**Resulting honest metrics** (see `ML/evaluation/metrics.json`):
-  - Deployed model: Logistic Regression (best of three compared by 5-fold CV)
-  - Held-out test accuracy: **92.67%** (group-aware split)
-  - 5-fold group-aware cross-validation: **92.13% ± 0.89%** (folds:
-    93.50% / 90.89% / 92.68% / 91.87% / 91.71%)
-  - Train accuracy: 94.98% (a 2.31-point train/test gap)
-  - Compared models (CV accuracy): Logistic Regression 92.13%,
-    Random Forest 89.09%, Gradient Boosting 88.49%
-  - Confusion matrix shows realistic, clinically-sensible confusions
-    concentrated among genuinely similar conditions (Hepatitis B/C/D/E
-    confusing with each other and with Jaundice, Asthma variants
-    overlapping) — not random noise.
-
-- **`healthcare_facilities.csv` is real and unmodified.** This is the
-  World Bank / energydata.info "Kenya — Healthcare Facilities" dataset,
-  sourced from Kenya's open data portal (opendata.go.ke), covering
-  **10,013 facilities across all 47 counties**. `init_db.py` maps each
-  facility's raw `Type` field (Dispensary, Health Centre, District
-  Hospital, etc.) to a KEPH level 2–6 using Kenya's Essential Package for
-  Health definitions — see `TYPE_TO_KEPH` in `backend/init_db.py`. 279
-  rows are excluded from routing because they're ancillary (stand-alone
-  labs, VCT centres, admin offices, a funeral home) rather than places to
-  send a walk-in patient. The resulting distribution is realistic for
-  Kenya's health pyramid: 7,865 dispensary-level, 1,331 health centres,
-  523 hospitals, 12 provincial/county referral, 3 national referral
-  (Kenyatta National, Moi Teaching & Referral, National Spinal Injury
-  Hospital).
-
-## Setup
-
-```bash
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+git clone https://github.com/M-Linet/Healthcare-Access-Optimization-System.git
+cd Healthcare-Access-Optimization-System
 pip install -r requirements.txt
+cd backend
+python -m uvicorn main:app --port 8000
 ```
 
-## Run it (three steps, in order)
+Then open http://127.0.0.1:8000 in your browser. The whole app is served from that one link.
 
-```bash
-# 1. Generate the training data (only needed once, or after editing
-#    generate_augmented_dataset.py — dataset.csv is already included, so
-#    you can skip this step and go straight to step 2)
-cd data
-python generate_augmented_dataset.py
+The trained model and the facility database are already in the repo, so you do not need to train anything. If you want to rebuild them:
 
-# 2. Train the model
-cd ../ML
-python train_model.py
-
-# Optional but recommended: run the full evaluation suite (cross-validation,
-# confusion matrix, feature importance — everything in ML/evaluation/)
-python evaluate_model.py
-
-# 3. Build the facility database and start the server
-cd ../backend
-python init_db.py
-uvicorn main:app --reload --port 8000
+```
+python ML/train_model.py        # trains the model that the app uses
+python backend/init_db.py       # rebuilds the facility database from the CSV
+python backend/apply_corrections.py   # re-applies my fixes to the facility data
 ```
 
-Then open **http://localhost:8000** in your browser — the whole app (symptom
-checker, KEPH ladder, and nearest-facility finder) is served from that one
-link. No separate frontend build step, no Android Studio needed.
+If you get a scikit-learn version warning, running `python ML/train_model.py` fixes it. It trains the same model on your version.
 
-## API reference
+## How accurate is it?
 
-| Method | Endpoint                  | Purpose                                          |
-|--------|----------------------------|--------------------------------------------------|
-| GET    | `/api/symptoms`            | List all known symptom tokens                    |
-| POST   | `/api/predict`              | `{symptoms: [...]}` → predicted disease + KEPH level |
-| POST   | `/api/nearest-facilities`   | `{latitude, longitude, min_keph_level?, limit?}` → ranked facilities |
-| POST   | `/api/triage`               | `{symptoms, latitude, longitude}` → prediction + matching facilities combined |
-| GET    | `/api/facilities`           | Full facility list                               |
+On cases the model had not seen, it picks the right condition about **92%** of the time:
 
-`/api/nearest-facilities` and `/api/triage` also return `nearest_km` and `far_warning` (true when the nearest suitable facility is more than 50 km away). Dental, eye, blood-bank, pharmacy and physiotherapy listings are never returned.
+| | Result |
+|---|---|
+| Held-out test accuracy | 92.67% |
+| 5-fold cross-validation | 92.13% ± 0.89% |
+| Logistic Regression vs Random Forest vs Gradient Boosting | 92.13% / 89.09% / 88.49% |
 
-| GET    | `/health`                   | Healthcheck                                      |
+I would not take that 92% at face value, and the next section says why.
 
-## Retraining after any data change
+The mistakes are not random. They are mostly between conditions that really are similar, such as hepatitis B, C, D and E, and some of the asthma variants.
 
-1. Edit `data/generate_augmented_dataset.py` if you want different noise
-   parameters, or replace `data/dataset_real_kaggle_raw.csv` with an updated
-   real dataset.
-2. Re-run `python data/generate_augmented_dataset.py` to rebuild `dataset.csv`.
-3. Re-run `python ML/train_model.py` and, ideally, `python ML/evaluate_model.py`.
-4. Restart the server — no other changes needed.
+The model's confidence is also worth something. With only 2 or 3 symptoms entered, it was right about 72% of the time when it was 40 to 50% confident, about 87% at 50 to 60%, and about 95% at 50% or more. That is where the 50% cut-off for the low-confidence warning comes from (`ML/evaluation/confidence_calibration.py`).
+
+## About the data (and why 92% is probably too high)
+
+**Symptoms and conditions.** I used the public Kaggle dataset "Disease Symptom Prediction" (author: itachi9604). It has 4,920 rows, but only 304 of them are different. The same cases are copied again and again, so a normal train/test split puts copies of one case on both sides, and the model just remembers them. I checked this: with the copies removed, the model still scored 100%, and it stayed above 99% even when I randomly dropped and added symptoms. The reason is that the dataset gives each condition a few fixed symptom lists, so it behaves like a lookup table, not like real patients.
+
+To get something closer to real life, I built a larger training set of 6,150 cases from the real symptom lists in that dataset (`data/generate_augmented_dataset.py`). It keeps the real condition-to-symptom links. It adds symptoms that are common to many illnesses, sometimes borrows a symptom from another condition, and sometimes leaves a symptom out. Nothing medical is invented, but it is still built from the same 304 cases. That is why I say the accuracy is probably optimistic, because near-copies of one case can still end up on both sides of a split. Training, evaluation and model comparison all use the same case-grouped split, and the grouped scores came out almost the same as the earlier random-split scores (92.44% and 92.37%).
+
+**Facilities.** The facility list is the World Bank / energydata.info "Kenya - Healthcare Facilities" file (from the Kenya Open Data portal). It has 10,013 rows, and 9,736 are loaded into the app after dropping bad coordinates and things that are not places to send a patient (stand-alone labs, VCT centres, a funeral home). KEPH levels are not in that file, so I worked them out from the facility type. The result is 7,722 at level 2, 1,431 at level 3, 552 at level 4, 28 at level 5 and 3 at level 6.
+
+**Data story.** The notebook `notebook/Data_Exploration_and_Analysis.ipynb` walks through all of this with charts, including what the symptom data really contains, how facilities are spread across counties, how far people are from referral hospitals, and where the model gets it wrong. The charts are also in the app's "Data story" tab and saved in `ML/evaluation/story/`.
+
+## What is in the repo
+
+```
+backend/        FastAPI server and the logic behind the answers
+  main.py         the API, and serves the web page
+  red_flags.py    emergency symptom combinations
+  patient_context.py   age, sex, pregnancy and severity adjustments
+  geo.py          distance, ranking, and hiding eye/dental/blood-bank listings
+  road_distance.py     road routing with a straight-line fallback
+  prediction_log.py    usage log that stores no personal details
+  init_db.py, apply_corrections.py   build and fix the facility database
+  tests/          54 automated tests
+frontend/       the whole web app in one page (English and Swahili)
+ML/             training, evaluation scripts, saved model, charts and metrics
+data/           facility list, symptom data, care-level mapping, my corrections
+notebook/       the data story and the model development notebooks
+docs/           the test plan
+```
 
 ## Limitations
 
-This is a student project and a decision-support prototype. It is not a
-diagnostic tool and has not been tested with patients or clinicians.
+This is a prototype. It has not been tested with patients, and no clinician has reviewed it.
 
-**Model**
-- The Kaggle symptom data has 4,920 rows but only 304 distinct cases (each
-  case is repeated about 16 times). The training set was then augmented to
-  6,150 rows. Because of this, the reported accuracy (92.13% +/- 0.89 in
-  5-fold cross-validation, 92.67% on the held-out test split) is probably
-  optimistic. Training, evaluation and model comparison all use the same
-  case-grouped split, so exact copies of a case never sit on both sides.
-  But the 6,150 rows include augmented variants of the same 304 cases, and
-  those near-copies can still cross the split. The grouped numbers are
-  almost the same as the earlier random-split numbers (92.44% / 92.37%),
-  which shows exact duplicates were not the main source of the high score.
-- The "low confidence" warning appears when the top prediction is below 50%.
-  This cutoff comes from `ML/evaluation/confidence_calibration.py`: on held-out
-  cases with only 2 or 3 symptoms entered, the model was right about 72% of
-  the time at 40-50% confidence and about 87% at 50-60%. It is a trade-off,
-  not a guarantee, and it was measured on the same augmented data as the rest.
-- No significance test was run, and only the regularisation strength was
-  checked. There was no full grid search.
-- The model predicts a disease from symptoms. The care level (KEPH 2 to 6)
-  comes from a mapping of diseases to levels that I decided myself. It is a
-  project judgement, not an official guideline.
-- Red-flag rules (for example chest pain with breathlessness) run
-  separately from the model and override it. They were written for this
-  project and have not been reviewed by a clinician.
+- **Accuracy is likely too high.** See above. No significance test was run, and only the regularisation strength was checked, not a full grid search.
+- **The care levels are my own judgement.** The model predicts a condition. Which KEPH level each condition needs comes from a mapping I decided myself. It is not an official guideline.
+- **The emergency rules are mine too.** I wrote them for this project and a clinician has not looked at them.
+- **Facility levels are inferred.** They come from the facility type, not the official register, so some are wrong. I corrected three private hospitals that were tagged as national referral hospitals (`data/facility_corrections.csv`). Known remaining problems are listed by `ML/evaluation/data_quality_check.py`: two Turkana dispensaries with coordinates outside Kenya, 13 name and county pairs that appear twice, and one row with placeholder coordinates. I left them in so the facility counts stay the same across the report and the notebook.
+- **Eye, dental, blood-bank, pharmacy and physiotherapy listings are hidden** from results, but other odd listings may remain.
+- **Routing is approximate.** Drive times ignore traffic, and the app cannot know whether a facility is open or has beds.
+- **Not done yet:** user testing with real people, and a review by a health professional.
 
-**Facility data**
-- KEPH levels are inferred from the facility type, not taken from the
-  official register. Three private hospitals that were tagged level 6 were
-  corrected to level 5 (see `data/facility_corrections.csv`); other levels
-  may still be off.
-- `ML/evaluation/data_quality_check.py` lists what is still known to be
-  wrong: 2 Turkana dispensaries with coordinates outside Kenya's bounding
-  box, 13 name and county pairs that appear twice, and one row with
-  placeholder coordinates. These were left in so the facility count stays
-  consistent across the report and the notebook.
-- Dental, eye, blood bank, pharmacy and physiotherapy listings are hidden
-  from triage results, but other unusual listings may remain.
-
-**Routing**
-- Distances use OSRM road routing when it is reachable and fall back to
-  straight-line distance otherwise. The result tells the user which one was
-  used. Drive time does not include traffic, and the distance is not a
-  guarantee that a facility is open or has beds.
-- If the nearest suitable facility is more than 50 km away, the result says
-  so and points to the nearest facility of any level and to 999 / 112.
-
-**Not done yet**
-- Manual, user and alpha/beta testing with real people.
-- Review by a clinician.
-
-## Facility data notes / known limitations
-
-- KEPH level is *inferred* from the `Type` column, since the source dataset
-  doesn't carry an official KEPH tag. This is a reasonable approximation but
-  not authoritative — cross-check against the real KMHFR registry
-  (`kmhfr.health.go.ke`) if this needs to be defensible for a live deployment.
-- 84 facilities show `(0,0)`-style or missing coordinates in the raw file
-  and are dropped automatically; ~200 more are ancillary types (labs, VCT
-  centres) and excluded from routing by design (see `EXCLUDED_TYPES` in
-  `init_db.py`) — adjust that set if you want them included.
-- Private facilities (clinics, nursing homes) are included alongside public
-  ones. If your project scope is public-sector-only, filter on `ownership`
-  in `init_db.py`'s `transform_row()` before inserting.
-
-## Deploying so it's reachable from a phone / off your laptop
-
-Right now `uvicorn` serves locally. For a real deployed link, the simplest
-options are:
-- **Render / Railway / Fly.io** (free tiers): push this repo, point them at
-  `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`.
-- **ngrok**: run `ngrok http 8000` while `uvicorn` is running locally, for a
-  temporary public link — good for demos to your supervisor.
-
-## Next steps (from your original plan)
-
-1. FastAPI inference endpoints — done (`/api/predict`)
-2. Haversine distance routing — done (`backend/geo.py`, `/api/nearest-facilities`)
-3. Web client — done (`frontend/index.html`, replaces the Android Studio plan)
-4. Real facility dataset (energydata.info, 9,736 facilities loaded into the database) — done
-5. Emergency red-flag detection — done (`backend/red_flags.py`)
-6. Patient context (age/sex/pregnancy) & symptom severity — done (`backend/patient_context.py`)
-7. Confidence floor for uncertain predictions — done
-8. Swahili/English language toggle in the UI — done
-9. Unit tests for `geo.py` and the vectorizer — done (`backend/tests/`)
-10. Rate limiting on prediction endpoints — done (slowapi, 30/min)
-11. Non-PII prediction logging + usage stats endpoint — done (`/api/stats`)
-12. Real Kaggle symptom dataset — done, with full leakage/robustness
-    diagnosis and a defensible augmented-training approach (see "About the
-    data" above) — deployed Logistic Regression: test accuracy 92.67%, 5-fold CV 92.13% ± 0.89% (group-aware split)
-13. Consider adding authentication / patient session history if scope grows
-14. Road-distance routing (OSRM) with straight-line fallback — done
-15. Multi-model comparison (Logistic Regression, Random Forest, Gradient
-    Boosting) — done; a paired statistical test is still future work
-16. Consider SHAP/permutation importance for more rigorous interpretability
-    than Gini-based feature importance alone
-
-## What's new in this version (realism pass)
-
-Building on the working prototype, this version adds:
-
-- **Emergency red-flag detection** (`backend/red_flags.py`) — a rule-based layer
-  that runs independently of the ML model. Dangerous symptom combinations
-  (e.g. chest pain + breathlessness + sweating, slurred speech + limb
-  weakness) trigger an `is_emergency: true` flag, specific advice, and
-  Kenya's emergency number (999/112), and force routing to at least a
-  County Referral Hospital (KEPH L5) regardless of what the classifier
-  predicted.
-- **Confidence floor** — predictions under 50% confidence are marked
-  `low_confidence: true`. The frontend shows a caution notice instead of
-  asserting a diagnosis with false certainty.
-- **Patient context** (`backend/patient_context.py`) — optional age, sex,
-  and pregnancy fields adjust the recommended KEPH level: pregnancy with
-  relevant symptoms routes to at least a Health Centre for maternity
-  capability; infants and patients 65+ get a precautionary bump.
-- **Per-symptom severity** — users can mark each symptom mild/moderate/severe;
-  two or more "severe" symptoms bump the recommended KEPH level by one tier.
-- **Swahili/English toggle** — the whole UI (labels, KEPH ladder, notices)
-  switches language client-side with no reload.
-- **Rate limiting** — `/api/predict` and `/api/triage` are capped at
-  30 requests/minute per IP (via `slowapi`) to prevent abuse.
-- **Non-PII usage logging** (`backend/prediction_log.py`) — every prediction
-  logs disease, confidence, KEPH level, and whether a red flag fired, to
-  `backend/prediction_log.sqlite`. Coordinates are rounded to ~11km precision
-  before storage — nowhere near enough to identify a specific person's
-  location. Query `/api/stats` for aggregate numbers (useful for your defense).
-- **Unit tests** (`backend/tests/`) — automated tests covering Haversine distance
-  correctness/symmetry, facility ranking and KEPH filtering, the symptom
-  vectorizer's multi-hot encoding, and the train/test split's determinism.
-  Run with `pytest tests/ -v` from the `backend/` folder.
-
-### New API fields worth knowing about
-
-`/api/predict` and the `prediction` object inside `/api/triage` now return:
-
-```json
-{
-  "predicted_disease": "...",
-  "confidence": 0.79,
-  "low_confidence": false,
-  "recommended_keph_level": 6,
-  "base_keph_level": 6,
-  "context_adjustments": ["..."],
-  "red_flags": [{"label": "...", "advice": "...", "matched_symptoms": [...]}],
-  "is_emergency": true,
-  "emergency_number": "999 / 112",
-  "top_alternatives": [...]
-}
-```
-
-Optional request fields: `severity` (dict of symptom→mild/moderate/severe),
-`age` (int), `sex` (male/female/other), `pregnant` (bool).
-
-
-- `notebook/Data_Exploration_and_Analysis.ipynb` is the data story: what the symptom data really contains, how Kenya's facilities compare with what the conditions need, how far the nearest referral hospital is, and where the model fails. The charts are also saved in `ML/evaluation/story/`.
-- `ML/extended_search/` holds a small manual search over model settings and model types. See the README in that folder.
-
-## Running the tests
+## Tests
 
 ```
 cd backend
 python -m pytest tests -v
 ```
 
-54 automated tests (distance, symptom encoding, red-flag rules, care level rules, specialist-clinic filter, routing fallback, far-facility warning, confidence cutoff and the API).
+54 tests cover distance and ranking, symptom encoding, the red-flag rules, the care level rules, the specialist-clinic filter, the routing fallback, the far-facility warning, the confidence cut-off and the API.
+
+## What I would do next
+
+- Test it with real users and fix what they find.
+- Ask a clinician to check the emergency rules and the condition-to-level mapping.
+- Check the facility levels against the official KMHFL registry.
+- Tag the augmented cases by their source case, so the train/test split can be properly clean.
+- Add a significance test when comparing models.
+
+## Credits and sources
+
+- Facilities: World Bank / energydata.info, "Kenya - Healthcare Facilities" (Kenya Open Data).
+- Symptoms and conditions: "Disease Symptom Prediction", Kaggle (author: itachi9604).
+- Road routing: Project OSRM. Map tiles: OpenStreetMap.
+- Built with FastAPI, scikit-learn, pandas, SQLite and Leaflet.
